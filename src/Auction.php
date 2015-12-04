@@ -7,15 +7,11 @@ class Auction
     private $startTime;
     private $endTime;
     private $owner;
-
-    /**
-     * @var BidCollection
-     */
     private $bids;
 
     public function __construct(
         AuctionTitle $title,
-        string $description,
+        AuctionDescription $description,
         DateTimeImmutable $startTime,
         DateTimeImmutable $endTime,
         string $owner
@@ -51,7 +47,7 @@ class Auction
     private function ensureAuctionHasStarted()
     {
         $now = new DateTimeImmutable();
-        
+
         // the invert flag of DateTimeImmutable is set to 1 if the difference is negative
         if (1 === $this->startTime->diff($now)->invert) {
             throw new InvalidArgumentException('Auction has not started yet');
