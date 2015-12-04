@@ -1,11 +1,7 @@
 <?php declare(strict_types = 1);
 
-namespace Mihaeu\ProductConfigurator;
-
-require 'CreateUsdTrait.php';
-
 /**
- * @covers Mihaeu\ProductConfigurator\Currency
+ * @covers Currency
  */
 class CurrencyTest extends \PHPUnit_Framework_TestCase
 {

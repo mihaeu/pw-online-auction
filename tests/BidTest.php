@@ -1,9 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Mihaeu\ProductConfigurator;
-
-require 'CreateMoneyTrait.php';
-
 class BidTest extends \PHPUnit_Framework_TestCase
 {
     use CreateMoneyTrait;

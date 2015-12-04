@@ -7,12 +7,14 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
-                'auction' => '/Auction.php',
-                'auctiontitle' => '/AuctionTitle.php',
-                'bid' => '/Bid.php',
-                'bidcollection' => '/BidCollection.php',
-                'currency' => '/Currency.php',
-                'money' => '/Money.php'
+                'auctiontest' => '/AuctionTest.php',
+                'auctiontitletest' => '/AuctionTitleTest.php',
+                'bidcollectiontest' => '/BidCollectionTest.php',
+                'bidtest' => '/BidTest.php',
+                'createmoneytrait' => '/CreateMoneyTrait.php',
+                'createusdtrait' => '/CreateUsdTrait.php',
+                'currencytest' => '/CurrencyTest.php',
+                'moneytest' => '/MoneyTest.php'
             );
         }
         $cn = strtolower($class);

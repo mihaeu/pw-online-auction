@@ -25,11 +25,6 @@ class Auction
 
     public function addBidFromUser($bid, $user)
     {
-        $interval = $this->startTime->diff(new DateTimeImmutable());
-        if ($this->startTime->diff(new DateTimeImmutable())->s < 0) {
-            throw new InvalidArgumentException('Auction has not started yet');
-        }
-
         if ($bid < $this->highestBid()) {
             throw new InvalidArgumentException('Bid must be higher than highest bid '.$this->highestBid());
         }
@@ -44,7 +39,7 @@ class Auction
     public function highestBidder() : string
     {
         if (0 === count($this->bids)) {
-            return 0;
+            throw new Exception('No bids');
         }
 
         return $this->bids[$this->highestBid()];

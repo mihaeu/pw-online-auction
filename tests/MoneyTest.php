@@ -1,10 +1,8 @@
 <?php declare(strict_types = 1);
 
-namespace Mihaeu\ProductConfigurator;
-
 /**
- * @covers Mihaeu\ProductConfigurator\Money
- * @uses Mihaeu\ProductConfigurator\Currency
+ * @covers Money
+ * @uses Currency
  */
 class MoneyTest extends \PHPUnit_Framework_TestCase
 {

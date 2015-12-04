@@ -52,20 +52,34 @@ class AuctionTest extends PHPUnit_Framework_TestCase
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than highest bid/');
         $auction->addBidFromUser(199, '2');
     }
+//
+//    public function testCannotBidWhenNotStarted()
+//    {
+//        $tomorrow = new DateTime();
+//        $tomorrow->modify('+1d');
+//        $auction = new Auction(
+//            new AuctionTitle('Test'),
+//            '',
+//            DateTimeImmutable::createFromMutable($tomorrow),
+//            new DateTimeImmutable(),
+//            ''
+//        );
+//
+//        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has not started yet/');
+//        $auction->addBidFromUser(199, '1');
+//    }
 
-    public function testCannotBidWhenNotStarted()
+    public function testFindsHighestBidder()
     {
-        $tomorrow = new DateTime();
-        $tomorrow->modify('+1d');
         $auction = new Auction(
             new AuctionTitle('Test'),
             '',
-            DateTimeImmutable::createFromMutable($tomorrow),
+            new DateTimeImmutable(),
             new DateTimeImmutable(),
             ''
         );
 
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has not started yet/');
-        $auction->addBidFromUser(199, '1');
+        $this->setExpectedExceptionRegExp(Exception::class, '/No bids/');
+        $auction->highestBidder();
     }
 }

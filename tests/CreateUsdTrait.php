@@ -1,7 +1,5 @@
 <?php declare(strict_types = 1);
 
-namespace Mihaeu\ProductConfigurator;
-
 trait CreateUsdTrait
 {
     private function createUsd()
