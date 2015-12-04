@@ -2,43 +2,55 @@
 
 class Auction
 {
-    private $titel;
+    private $title;
     private $description;
-//    private $startTime;
-//    private $endTime;
-    private $bids;
+    private $startTime;
+    private $endTime;
+    private $owner;
+    private $bids = [];
 
     public function __construct(
-        AuctionTitle $titel,
-        string $description
-//        DateTimeImmutable $startTime,
-//        DateTimeImmutable $endTime
+        AuctionTitle $title,
+        string $description,
+        DateTimeImmutable $startTime,
+        DateTimeImmutable $endTime,
+        string $owner
     ) {
-        $this->titel = $titel;
+        $this->title = $title;
         $this->description = $description;
-//        $this->startTime = $startTime;
-//        $this->endTime = $endTime;
-
-        $bids = [];
+        $this->startTime = $startTime;
+        $this->endTime = $endTime;
+        $this->owner = $owner;
     }
 
     public function addBidFromUser($bid, $user)
     {
-//        $now = DateTimeImmutable::createFromMutable(new DateTime());
-//        if ($this->startTime->diff($now)) {
-//            throw new InvalidArgumentException('Auction has not started yet.');
-//        }
-//
-//        if ($this->endTime->diff($now)) {
-//            throw new InvalidArgumentException('Auction finished.');
-//        }
+        if ($bid < $this->highestBid()) {
+            throw new InvalidArgumentException('Bid must be higher than highest bid '.$this->highestBid());
+        }
+
+        if ($user === $this->owner) {
+            throw new InvalidArgumentException('Auction owner cannot place bids');
+        }
 
         $this->bids[$bid] = $user;
     }
 
     public function highestBidder() : string
     {
-        $highestBid = max(array_keys($this->bids));
-        return $this->bids[$highestBid];
+        if (0 === count($this->bids)) {
+            return 0.0;
+        }
+
+        return $this->bids[$this->highestBid()];
+    }
+
+    private function highestBid() : float
+    {
+        if (0 === count($this->bids)) {
+            return 0.0;
+        }
+
+        return max(array_keys($this->bids));
     }
 }
