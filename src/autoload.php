@@ -8,7 +8,10 @@ spl_autoload_register(
         if ($classes === null) {
             $classes = array(
                 'auction' => '/Auction.php',
-                'auctiontitle' => '/AuctionTitle.php'
+                'auctiontitle' => '/AuctionTitle.php',
+                'mihaeu\\productconfigurator\\bid' => '/Bid.php',
+                'mihaeu\\productconfigurator\\currency' => '/Currency.php',
+                'mihaeu\\productconfigurator\\money' => '/Money.php'
             );
         }
         $cn = strtolower($class);

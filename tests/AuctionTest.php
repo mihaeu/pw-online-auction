@@ -53,19 +53,19 @@ class AuctionTest extends PHPUnit_Framework_TestCase
         $auction->addBidFromUser(199, '2');
     }
 
-//    public function testCannotBidWhenNotStarted()
-//    {
-//        $auction = new Auction(new AuctionTitle('test'), '');
-//
-////        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '//');
-////        $auction->place('');
-//    }
-//
-//    public function testCannotBidWhenFinished()
-//    {
-//        $auction = new Auction(new AuctionTitle('test'), '');
-//
-////        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '//');
-////        $auction->bid('');
-//    }
+    public function testCannotBidWhenNotStarted()
+    {
+        $tomorrow = new DateTime();
+        $tomorrow->modify('+1d');
+        $auction = new Auction(
+            new AuctionTitle('Test'),
+            '',
+            DateTimeImmutable::createFromMutable($tomorrow),
+            new DateTimeImmutable(),
+            ''
+        );
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has not started yet/');
+        $auction->addBidFromUser(199, '1');
+    }
 }
