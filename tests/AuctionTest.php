@@ -11,15 +11,25 @@
  */
 class AuctionTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @var DateTimeImmutable
+     */
+    private $now;
+
+    /**
+     * @var AuctionTitle
+     */
+    private $title;
+
+    public function setUp()
+    {
+        $this->now = new DateTimeImmutable();
+        $this->title = new AuctionTitle('Test');
+    }
+
     public function testUserCanPlaceBid()
     {
-        $auction = new Auction(
-            new AuctionTitle('Test'),
-            '',
-            new DateTimeImmutable(),
-            new DateTimeImmutable(),
-            ''
-        );
+        $auction = new Auction($this->title, '', $this->now, $this->now, '');
         $bid1 = new Bid(new Money(1, new Currency('EUR')), 'John');
         $bid2 = new Bid(new Money(2, new Currency('EUR')), 'Mary');
         $auction->addBidFromUser($bid1);
@@ -30,13 +40,7 @@ class AuctionTest extends PHPUnit_Framework_TestCase
     public function testOwnerCannotPlaceBids()
     {
         $owner = 'John Doe';
-        $auction = new Auction(
-            new AuctionTitle('Test'),
-            '',
-            new DateTimeImmutable(),
-            new DateTimeImmutable(),
-            $owner
-        );
+        $auction = new Auction($this->title, '', $this->now, $this->now, $owner);
 
         $this->setExpectedExceptionRegExp(
             InvalidArgumentException::class,
@@ -47,13 +51,7 @@ class AuctionTest extends PHPUnit_Framework_TestCase
 
     public function testBidHasToBeHigherThanPreviouslyHighestBid()
     {
-        $auction = new Auction(
-            new AuctionTitle('Test'),
-            '',
-            new DateTimeImmutable(),
-            new DateTimeImmutable(),
-            ''
-        );
+        $auction = new Auction($this->title, '', $this->now, $this->now, '');
 
         $auction->addBidFromUser(new Bid(new Money(100, new Currency('EUR')), 'John'));
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than highest bid/');
@@ -62,13 +60,7 @@ class AuctionTest extends PHPUnit_Framework_TestCase
 
     public function testFindsHighestBidder()
     {
-        $auction = new Auction(
-            new AuctionTitle('Test'),
-            '',
-            new DateTimeImmutable(),
-            new DateTimeImmutable(),
-            ''
-        );
+        $auction = new Auction($this->title, '', $this->now, $this->now, '');
 
         $this->setExpectedExceptionRegExp(Exception::class, '/No bids/');
         $auction->highestBid();

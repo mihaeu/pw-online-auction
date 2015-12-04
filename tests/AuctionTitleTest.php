@@ -10,4 +10,16 @@ class AuctionTitleTest extends PHPUnit_Framework_TestCase
         $title = new AuctionTitle('test');
         $this->assertEquals('test', $title->__toString());
     }
+
+    public function testRejectsShortTitle()
+    {
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Min/');
+        new AuctionTitle(str_repeat('.', AuctionTitle::MIN_LENGTH - 1));
+    }
+
+    public function testRejectsLongTitle()
+    {
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Max/');
+        new AuctionTitle(str_repeat('.', AuctionTitle::MAX_LENGTH + 1));
+    }
 }
