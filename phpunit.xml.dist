@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit backupGlobals="false"
+         beStrictAboutTestsThatDoNotTestAnything="true"
+         beStrictAboutOutputDuringTests="true"
+         beStrictAboutTodoAnnotatedTests="true"
+         checkForUnintentionallyCoveredCode="true"
+         colors="true"
+         verbose="true">
+  <testsuite name="tests">
+    <directory suffix="Test.php">tests</directory>
+  </testsuite>
+
+  <!--<logging>-->
+    <!--<log type="coverage-html" target="build/coverage"/>-->
+  <!--</logging>-->
+
+  <filter>
+    <whitelist addUncoveredFilesFromWhitelist="true">
+      <directory suffix=".php">src</directory>
+    </whitelist>
+  </filter>
+</phpunit>
+
