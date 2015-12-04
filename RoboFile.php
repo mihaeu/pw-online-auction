@@ -25,6 +25,9 @@ class RoboFile extends \Robo\Tasks
             ->monitor('src', function () {
                 $this->phpab();
             })
+            ->monitor('tests', function () {
+                $this->phpab();
+            })
             ->run();
     }
 }

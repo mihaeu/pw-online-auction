@@ -31,6 +31,15 @@ class Auction
 
     public function addBidFromUser(Bid $bid)
     {
+        $now = new DateTimeImmutable();
+        if (1 === $this->startTime->diff($now)->invert) {
+            throw new InvalidArgumentException('Auction has not started yet');
+        }
+
+        if (1 === $now->diff($this->endTime)->invert) {
+            throw new InvalidArgumentException('Auction finished');
+        }
+
         if ($this->bids->hasBids() && $this->bids->findHighest()->isHigherThan($bid)) {
             throw new InvalidArgumentException('Bid must be higher than highest bid');
         }
