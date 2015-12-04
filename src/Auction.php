@@ -7,7 +7,11 @@ class Auction
     private $startTime;
     private $endTime;
     private $owner;
-    private $bids = [];
+
+    /**
+     * @var BidCollection
+     */
+    private $bids;
 
     public function __construct(
         AuctionTitle $title,
@@ -21,36 +25,29 @@ class Auction
         $this->startTime = $startTime;
         $this->endTime = $endTime;
         $this->owner = $owner;
+
+        $this->bids = new BidCollection();
     }
 
-    public function addBidFromUser($bid, $user)
+    public function addBidFromUser(Bid $bid)
     {
-        if ($bid < $this->highestBid()) {
-            throw new InvalidArgumentException('Bid must be higher than highest bid '.$this->highestBid());
+        if ($this->bids->hasBids() && $this->bids->findHighest()->isHigherThan($bid)) {
+            throw new InvalidArgumentException('Bid must be higher than highest bid');
         }
 
-        if ($user === $this->owner) {
+        if ($bid->user() === $this->owner) {
             throw new InvalidArgumentException('Auction owner cannot place bids');
         }
 
-        $this->bids[$bid] = $user;
+        $this->bids->addBid($bid);
     }
 
-    public function highestBidder() : string
+    public function highestBid() : Bid
     {
-        if (0 === count($this->bids)) {
+        $highest = $this->bids->findHighest();
+        if (null === $highest) {
             throw new Exception('No bids');
         }
-
-        return $this->bids[$this->highestBid()];
-    }
-
-    private function highestBid() : int
-    {
-        if (0 === count($this->bids)) {
-            return 0;
-        }
-
-        return max(array_keys($this->bids));
+        return $highest;
     }
 }

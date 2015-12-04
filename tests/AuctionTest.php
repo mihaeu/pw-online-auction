@@ -2,7 +2,12 @@
 
 /**
  * @covers Auction
+ * @covers BidCollection
  * @uses AuctionTitle
+ * @uses Money
+ * @uses Currency
+ * @uses Bid
+ * @uses BidCollection
  */
 class AuctionTest extends PHPUnit_Framework_TestCase
 {
@@ -15,9 +20,11 @@ class AuctionTest extends PHPUnit_Framework_TestCase
             new DateTimeImmutable(),
             ''
         );
-        $auction->addBidFromUser(199, 'Mary Doe');
-        $auction->addBidFromUser(399, 'John Doe');
-        $this->assertEquals('John Doe', $auction->highestBidder());
+        $bid1 = new Bid(new Money(1, new Currency('EUR')), 'John');
+        $bid2 = new Bid(new Money(2, new Currency('EUR')), 'Mary');
+        $auction->addBidFromUser($bid1);
+        $auction->addBidFromUser($bid2);
+        $this->assertEquals($bid2, $auction->highestBid());
     }
 
     public function testOwnerCannotPlaceBids()
@@ -35,7 +42,7 @@ class AuctionTest extends PHPUnit_Framework_TestCase
             InvalidArgumentException::class,
             '/Auction owner cannot place bids/'
         );
-        $auction->addBidFromUser(399, $owner);
+        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), $owner));
     }
 
     public function testBidHasToBeHigherThanPreviouslyHighestBid()
@@ -48,26 +55,10 @@ class AuctionTest extends PHPUnit_Framework_TestCase
             ''
         );
 
-        $auction->addBidFromUser(999, '1');
+        $auction->addBidFromUser(new Bid(new Money(100, new Currency('EUR')), 'John'));
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than highest bid/');
-        $auction->addBidFromUser(199, '2');
+        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), 'Mary'));
     }
-//
-//    public function testCannotBidWhenNotStarted()
-//    {
-//        $tomorrow = new DateTime();
-//        $tomorrow->modify('+1d');
-//        $auction = new Auction(
-//            new AuctionTitle('Test'),
-//            '',
-//            DateTimeImmutable::createFromMutable($tomorrow),
-//            new DateTimeImmutable(),
-//            ''
-//        );
-//
-//        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has not started yet/');
-//        $auction->addBidFromUser(199, '1');
-//    }
 
     public function testFindsHighestBidder()
     {
@@ -80,6 +71,6 @@ class AuctionTest extends PHPUnit_Framework_TestCase
         );
 
         $this->setExpectedExceptionRegExp(Exception::class, '/No bids/');
-        $auction->highestBidder();
+        $auction->highestBid();
     }
 }

@@ -26,4 +26,9 @@ class BidCollection
         }
         return $max;
     }
+
+    public function hasBids() : bool
+    {
+        return 0 !== count($this->bids);
+    }
 }
