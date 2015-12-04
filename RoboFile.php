@@ -15,7 +15,7 @@ class RoboFile extends \Robo\Tasks
 
     public function phpab()
     {
-        $this->_exec('php phpab.phar -o src/autoload.php src');
+        $this->_exec('php phpab.phar -o src/autoload.php -e autoload.php src');
     }
 
     public function dev()
