@@ -10,6 +10,12 @@ class BidCollectionTest extends \PHPUnit_Framework_TestCase
 {
     use CreateMoneyTrait;
 
+    public function testHighestBidWithoutBidsIs0()
+    {
+        $bidCollection = new BidCollection();
+        $this->assertEquals(0, $bidCollection->findHighest());
+    }
+
     public function testOneBidIsHighestBid()
     {
         $bidCollection = new BidCollection();

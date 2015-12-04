@@ -1,16 +1,11 @@
 <?php declare(strict_types = 1);
 
-class BidCollection implements \IteratorAggregate
+class BidCollection
 {
     /**
      * @var Bid[]
      */
     private $bids;
-
-    public function getIterator()
-    {
-        return new \ArrayIterator($this->bids);
-    }
 
     public function addBid(Bid $bid)
     {
