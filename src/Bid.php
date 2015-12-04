@@ -32,4 +32,9 @@ class Bid
     {
         return $this->user;
     }
+
+    public function isHigherThan(Bid $bid2) : bool
+    {
+        return $this->bid->amount() > $bid2->bid()->amount();
+    }
 }
