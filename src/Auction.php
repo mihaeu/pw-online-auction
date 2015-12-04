@@ -31,22 +31,10 @@ class Auction
 
     public function addBidFromUser(Bid $bid)
     {
-        $now = new DateTimeImmutable();
-        if (1 === $this->startTime->diff($now)->invert) {
-            throw new InvalidArgumentException('Auction has not started yet');
-        }
-
-        if (1 === $now->diff($this->endTime)->invert) {
-            throw new InvalidArgumentException('Auction finished');
-        }
-
-        if ($this->bids->hasBids() && $this->bids->findHighest()->isHigherThan($bid)) {
-            throw new InvalidArgumentException('Bid must be higher than highest bid');
-        }
-
-        if ($bid->user() === $this->owner) {
-            throw new InvalidArgumentException('Auction owner cannot place bids');
-        }
+        $this->ensureAuctionHasStarted();
+        $this->ensureAuctionHasNotEnded();
+        $this->ensureNewBidIsHIgherThanLast($bid);
+        $this->ensureBidderIsNotSeller($bid);
 
         $this->bids->addBid($bid);
     }
@@ -58,5 +46,45 @@ class Auction
             throw new Exception('No bids');
         }
         return $highest;
+    }
+
+    private function ensureAuctionHasStarted()
+    {
+        $now = new DateTimeImmutable();
+        
+        // the invert flag of DateTimeImmutable is set to 1 if the difference is negative
+        if (1 === $this->startTime->diff($now)->invert) {
+            throw new InvalidArgumentException('Auction has not started yet');
+        }
+    }
+
+    private function ensureAuctionHasNotEnded()
+    {
+        $now = new DateTimeImmutable();
+
+        // the invert flag of DateTimeImmutable is set to 1 if the difference is negative
+        if (1 === $now->diff($this->endTime)->invert) {
+            throw new InvalidArgumentException('Auction finished');
+        }
+    }
+
+    /**
+     * @param Bid $bid
+     */
+    private function ensureNewBidIsHIgherThanLast(Bid $bid)
+    {
+        if ($this->bids->hasBids() && $this->bids->findHighest()->isHigherThan($bid)) {
+            throw new InvalidArgumentException('Bid must be higher than highest bid');
+        }
+    }
+
+    /**
+     * @param Bid $bid
+     */
+    private function ensureBidderIsNotSeller(Bid $bid)
+    {
+        if ($bid->user() === $this->owner) {
+            throw new InvalidArgumentException('Auction owner cannot place bids');
+        }
     }
 }

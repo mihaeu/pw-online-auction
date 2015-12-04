@@ -41,6 +41,15 @@ class Currency
     }
 
     /**
+     * @param Currency $currency
+     * @return bool
+     */
+    public function notEquals(Currency $currency) :bool
+    {
+        return !$this->equals($currency);
+    }
+
+    /**
      * @param $currency
      */
     private function ensureCurrencyIsSupported($currency)
