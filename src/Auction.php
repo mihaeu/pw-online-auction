@@ -39,16 +39,16 @@ class Auction
     public function highestBidder() : string
     {
         if (0 === count($this->bids)) {
-            return 0.0;
+            return 0;
         }
 
         return $this->bids[$this->highestBid()];
     }
 
-    private function highestBid() : float
+    private function highestBid() : int
     {
         if (0 === count($this->bids)) {
-            return 0.0;
+            return 0;
         }
 
         return max(array_keys($this->bids));

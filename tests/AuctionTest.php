@@ -15,8 +15,8 @@ class AuctionTest extends PHPUnit_Framework_TestCase
             new DateTimeImmutable(),
             ''
         );
-        $auction->addBidFromUser(1.99, 'Mary Doe');
-        $auction->addBidFromUser(3.99, 'John Doe');
+        $auction->addBidFromUser(199, 'Mary Doe');
+        $auction->addBidFromUser(399, 'John Doe');
         $this->assertEquals('John Doe', $auction->highestBidder());
     }
 
@@ -35,7 +35,7 @@ class AuctionTest extends PHPUnit_Framework_TestCase
             InvalidArgumentException::class,
             '/Auction owner cannot place bids/'
         );
-        $auction->addBidFromUser(3.99, $owner);
+        $auction->addBidFromUser(399, $owner);
     }
 
     public function testBidHasToBeHigherThanPreviouslyHighestBid()
@@ -48,9 +48,9 @@ class AuctionTest extends PHPUnit_Framework_TestCase
             ''
         );
 
-        $auction->addBidFromUser(9.99, '1');
+        $auction->addBidFromUser(999, '1');
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than highest bid/');
-        $auction->addBidFromUser(1.99, '2');
+        $auction->addBidFromUser(199, '2');
     }
 
 //    public function testCannotBidWhenNotStarted()
