@@ -5,13 +5,21 @@
 1. Online-Auktion
 
 Implementieren Sie die Geschäftslogik für eine Online-Auktion mit den folgenden
-Geschäftsregeln: Ein Benutzer hat einen Nicknamen und eine E-Mail-Adresse.
-Eine Auktion hat einen Titel, einen Beschreibungstext, einen Start- und
-Endzeitpunkt sowie einen Startpreis. Der Startpreis einer Auktion kann nicht
-mehr verändert werden. Jeder Benutzer kann Auktionen erstellen. Abgesehen vom
-Eigentümer kann jeder Benutzer auf jede Auktion bieten. Ein Gebot muss immer
-höher sein als das vorherige Gebot. Auf eine beendete Auktion kann nicht mehr
-geboten werden.
+Geschäftsregeln: 
+
+✗ Ein Benutzer hat einen Nicknamen und eine E-Mail-Adresse.
+
+✓ Eine Auktion hat einen Titel, einen Beschreibungstext, einen Start- und Endzeitpunkt sowie einen Startpreis.
+
+✓ Der Startpreis einer Auktion kann nicht mehr verändert werden.
+
+✗ Jeder Benutzer kann Auktionen erstellen.
+
+✓ Abgesehen vom Eigentümer kann jeder Benutzer auf jede Auktion bieten.
+
+✓ Ein Gebot muss immer höher sein als das vorherige Gebot.
+
+✓ Auf eine beendete Auktion kann nicht mehr geboten werden.
 
 2. Sofortkauf-Feature für die Online-Auktion
 

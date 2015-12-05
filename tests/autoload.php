@@ -15,7 +15,9 @@ spl_autoload_register(
                 'createmoneytrait' => '/CreateMoneyTrait.php',
                 'createusdtrait' => '/CreateUsdTrait.php',
                 'currencytest' => '/CurrencyTest.php',
-                'moneytest' => '/MoneyTest.php'
+                'emailtest' => '/EmailTest.php',
+                'moneytest' => '/MoneyTest.php',
+                'usertest' => '/UserTest.php'
             );
         }
         $cn = strtolower($class);

@@ -13,7 +13,9 @@ spl_autoload_register(
                 'bid' => '/Bid.php',
                 'bidcollection' => '/BidCollection.php',
                 'currency' => '/Currency.php',
-                'money' => '/Money.php'
+                'email' => '/Email.php',
+                'money' => '/Money.php',
+                'user' => '/User.php'
             );
         }
         $cn = strtolower($class);
