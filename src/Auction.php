@@ -8,12 +8,14 @@ class Auction
     private $endTime;
     private $owner;
     private $bids;
+    private $startPrice;
 
     public function __construct(
         AuctionTitle $title,
         AuctionDescription $description,
         DateTimeImmutable $startTime,
         DateTimeImmutable $endTime,
+        Money $startPrice,
         string $owner
     ) {
         $this->title = $title;
@@ -22,6 +24,9 @@ class Auction
         $this->endTime = $endTime;
         $this->owner = $owner;
 
+        $this->ensureStartPriceIsPositive($startPrice);
+        $this->startPrice = $startPrice;
+
         $this->bids = new BidCollection();
     }
 
@@ -29,6 +34,7 @@ class Auction
     {
         $this->ensureAuctionHasStarted();
         $this->ensureAuctionHasNotEnded();
+        $this->ensureBidIsHigherThanStartPrice($bid);
         $this->ensureNewBidIsHIgherThanLast($bid);
         $this->ensureBidderIsNotSeller($bid);
 
@@ -81,6 +87,24 @@ class Auction
     {
         if ($bid->user() === $this->owner) {
             throw new InvalidArgumentException('Auction owner cannot place bids');
+        }
+    }
+
+    /**
+     * @param Money $startPrice
+     */
+    private function ensureStartPriceIsPositive(Money $startPrice)
+    {
+        $zero = new Money(0, new Currency('EUR'));
+        if ($zero->greaterThan($startPrice)) {
+            throw new InvalidArgumentException('Start price has to be positive');
+        }
+    }
+
+    private function ensureBidIsHigherThanStartPrice(Bid $bid)
+    {
+        if ($this->startPrice->greaterThan($bid->bid())) {
+            throw new InvalidArgumentException('Bid has to be higher than start price');
         }
     }
 }

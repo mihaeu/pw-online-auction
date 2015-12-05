@@ -75,5 +75,12 @@ class MoneyTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals('1EUR', new Money(1, new Currency('EUR')));
     }
+
+    public function testComparesAmounts()
+    {
+        $eur1 = new Money(1, new Currency('EUR'));
+        $eur2 = new Money(2, new Currency('EUR'));
+        $this->assertTrue($eur2->greaterThan($eur1));
+    }
 }
 

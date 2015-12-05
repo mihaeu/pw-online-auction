@@ -44,6 +44,12 @@ class Money
                $this->amount === $money->amount();
     }
 
+    public function greaterThan(Money $money) :bool
+    {
+        $this->ensureCurrenciesMatch($this->currency, $money->currency());
+        return $this->amount > $money->amount;
+    }
+
     private function ensureCurrenciesMatch(Currency $myCurrency, Currency $yourCurrency)
     {
         if (!$myCurrency->equals($yourCurrency)) {
