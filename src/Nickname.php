@@ -14,13 +14,8 @@ class Nickname
      */
     public function __construct(string $nickname)
     {
-        if (strlen($nickname) < self::MIN_LENGTH) {
-            throw new InvalidArgumentException('Minimum length is '.self::MIN_LENGTH);
-        }
-
-        if (strlen($nickname) > self::MAX_LENGTH) {
-            throw new InvalidArgumentException('Maximum length is '.self::MAX_LENGTH);
-        }
+        $this->ensureNicknameIsNotTooShort($nickname);
+        $this->ensureNicknameIsNotTooLong($nickname);
 
         $this->nickname = $nickname;
     }
@@ -28,5 +23,25 @@ class Nickname
     public function __toString() : string
     {
         return $this->nickname;
+    }
+
+    /**
+     * @param string $nickname
+     */
+    private function ensureNicknameIsNotTooShort(string $nickname)
+    {
+        if (strlen($nickname) < self::MIN_LENGTH) {
+            throw new InvalidArgumentException('Minimum length is ' . self::MIN_LENGTH);
+        }
+    }
+
+    /**
+     * @param string $nickname
+     */
+    private function ensureNicknameIsNotTooLong(string $nickname)
+    {
+        if (strlen($nickname) > self::MAX_LENGTH) {
+            throw new InvalidArgumentException('Maximum length is ' . self::MAX_LENGTH);
+        }
     }
 }
