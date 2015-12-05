@@ -2,7 +2,6 @@
 
 /**
  * @covers Auction
- * @covers BidCollection
  * @uses AuctionTitle
  * @uses AuctionDescription
  * @uses Money
@@ -10,7 +9,7 @@
  * @uses Bid
  * @uses BidCollection
  */
-class AuctionTest extends PHPUnit_Framework_TestCase
+class AuctionTest extends BaseTestCase
 {
     /**
      * @var DateTimeImmutable
@@ -35,38 +34,39 @@ class AuctionTest extends PHPUnit_Framework_TestCase
 
     public function testUserCanPlaceBid()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, '');
-        $bid1 = new Bid(new Money(1, new Currency('EUR')), 'John');
-        $bid2 = new Bid(new Money(2, new Currency('EUR')), 'Mary');
-        $auction->addBidFromUser($bid1);
-        $auction->addBidFromUser($bid2);
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $bid1 = new Bid(new Money(1, new Currency('EUR')), $this->mockUser());
+        $bid2 = new Bid(new Money(2, new Currency('EUR')), $this->mockUser());
+        $auction->placeBid($bid1);
+        $auction->placeBid($bid2);
         $this->assertEquals($bid2, $auction->highestBid());
     }
 
     public function testOwnerCannotPlaceBids()
     {
-        $owner = 'John Doe';
+        $owner = $this->mockUser();
+        $owner->method('equals')->willReturn(true);
         $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $owner);
 
         $this->setExpectedExceptionRegExp(
             InvalidArgumentException::class,
             '/Auction owner cannot place bids/'
         );
-        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), $owner));
+        $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $owner));
     }
 
     public function testBidHasToBeHigherThanPreviouslyHighestBid()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, '');
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
 
-        $auction->addBidFromUser(new Bid(new Money(100, new Currency('EUR')), 'John'));
+        $auction->placeBid(new Bid(new Money(100, new Currency('EUR')), $this->mockUser()));
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than highest bid/');
-        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), 'Mary'));
+        $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
     }
 
     public function testFindsHighestBidder()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, '');
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(Exception::class, '/No bids/');
         $auction->highestBid();
@@ -75,19 +75,19 @@ class AuctionTest extends PHPUnit_Framework_TestCase
     public function testCannotBidBeforeAuctionStart()
     {
         $tomorrow = new DateTimeImmutable('tomorrow');
-        $auction = new Auction($this->title, $this->desc, $tomorrow, $this->now, $this->startPrice, '');
+        $auction = new Auction($this->title, $this->desc, $tomorrow, $this->now, $this->startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/started/');
-        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), 'John'));
+        $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
     }
 
     public function testCannotBidAfterAuction()
     {
         $yesterday = new DateTimeImmutable('yesterday');
-        $auction = new Auction($this->title, $this->desc, $this->now, $yesterday, $this->startPrice, '');
+        $auction = new Auction($this->title, $this->desc, $this->now, $yesterday, $this->startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/finished/');
-        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), 'John'));
+        $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
     }
 
     public function testStartPriceHasToBePositive()
@@ -95,15 +95,15 @@ class AuctionTest extends PHPUnit_Framework_TestCase
         $startPrice = new Money(-10, new Currency('EUR'));
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/positive/');
-        new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, '');
+        new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, $this->mockUser());
     }
 
     public function testBidHasToBeHigherThanStartPrice()
     {
         $startPrice = new Money(10, new Currency('EUR'));
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, '');
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/higher.*start/');
-        $auction->addBidFromUser(new Bid(new Money(1, new Currency('EUR')), 'John'));
+        $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
     }
 }

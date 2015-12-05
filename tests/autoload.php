@@ -10,6 +10,7 @@ spl_autoload_register(
                 'auctiondescriptiontest' => '/AuctionDescriptionTest.php',
                 'auctiontest' => '/AuctionTest.php',
                 'auctiontitletest' => '/AuctionTitleTest.php',
+                'basetestcase' => '/BaseTestCase.php',
                 'bidcollectiontest' => '/BidCollectionTest.php',
                 'bidtest' => '/BidTest.php',
                 'createmoneytrait' => '/CreateMoneyTrait.php',

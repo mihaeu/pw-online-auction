@@ -6,23 +6,31 @@ class Auction
     private $description;
     private $startTime;
     private $endTime;
-    private $owner;
+    private $seller;
     private $bids;
     private $startPrice;
 
+    /**
+     * @param AuctionTitle $title
+     * @param AuctionDescription $description
+     * @param DateTimeImmutable $startTime
+     * @param DateTimeImmutable $endTime
+     * @param Money $startPrice
+     * @param User $seller
+     */
     public function __construct(
         AuctionTitle $title,
         AuctionDescription $description,
         DateTimeImmutable $startTime,
         DateTimeImmutable $endTime,
         Money $startPrice,
-        string $owner
+        User $seller
     ) {
         $this->title = $title;
         $this->description = $description;
         $this->startTime = $startTime;
         $this->endTime = $endTime;
-        $this->owner = $owner;
+        $this->seller = $seller;
 
         $this->ensureStartPriceIsPositive($startPrice);
         $this->startPrice = $startPrice;
@@ -30,7 +38,10 @@ class Auction
         $this->bids = new BidCollection();
     }
 
-    public function addBidFromUser(Bid $bid)
+    /**
+     * @param Bid $bid
+     */
+    public function placeBid(Bid $bid)
     {
         $this->ensureAuctionHasStarted();
         $this->ensureAuctionHasNotEnded();
@@ -41,6 +52,10 @@ class Auction
         $this->bids->addBid($bid);
     }
 
+    /**
+     * @return Bid
+     * @throws Exception
+     */
     public function highestBid() : Bid
     {
         $highest = $this->bids->findHighest();
@@ -50,6 +65,9 @@ class Auction
         return $highest;
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function ensureAuctionHasStarted()
     {
         $now = new DateTimeImmutable();
@@ -60,6 +78,9 @@ class Auction
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function ensureAuctionHasNotEnded()
     {
         $now = new DateTimeImmutable();
@@ -72,6 +93,7 @@ class Auction
 
     /**
      * @param Bid $bid
+     * @throws InvalidArgumentException
      */
     private function ensureNewBidIsHIgherThanLast(Bid $bid)
     {
@@ -82,16 +104,18 @@ class Auction
 
     /**
      * @param Bid $bid
+     * @throws InvalidArgumentException
      */
     private function ensureBidderIsNotSeller(Bid $bid)
     {
-        if ($bid->user() === $this->owner) {
+        if ($bid->bidder()->equals($this->seller)) {
             throw new InvalidArgumentException('Auction owner cannot place bids');
         }
     }
 
     /**
      * @param Money $startPrice
+     * @throws InvalidArgumentException
      */
     private function ensureStartPriceIsPositive(Money $startPrice)
     {
@@ -101,6 +125,10 @@ class Auction
         }
     }
 
+    /**
+     * @param Bid $bid
+     * @throws InvalidArgumentException
+     */
     private function ensureBidIsHigherThanStartPrice(Bid $bid)
     {
         if ($this->startPrice->greaterThan($bid->bid())) {

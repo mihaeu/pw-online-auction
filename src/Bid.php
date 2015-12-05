@@ -8,33 +8,56 @@ class Bid
     private $bid;
 
     /**
-     * @var string
+     * @var User
      */
-    private $user;
+    private $bidder;
 
     /**
      * Bid constructor.
      * @param Money $bid
-     * @param string $user
+     * @param User $bidder
      */
-    public function __construct(Money $bid, string $user)
+    public function __construct(Money $bid, User $bidder)
     {
+        $this->ensureBidIsPositive($bid);
+
         $this->bid = $bid;
-        $this->user = $user;
+        $this->bidder = $bidder;
     }
 
+    /**
+     * @return Money
+     */
     public function bid() : Money
     {
         return $this->bid;
     }
 
-    public function user() : string
+    /**
+     * @return User
+     */
+    public function bidder() : User
     {
-        return $this->user;
+        return $this->bidder;
     }
 
+    /**
+     * @param Bid $bid2
+     * @return bool
+     */
     public function isHigherThan(Bid $bid2) : bool
     {
         return $this->bid->amount() > $bid2->bid()->amount();
+    }
+
+    /**
+     * @param Money $bid
+     */
+    private function ensureBidIsPositive(Money $bid)
+    {
+        $zero = new Money(0, new Currency('EUR'));
+        if (!$bid->greaterThan($zero)) {
+            throw new InvalidArgumentException('Bid must be higher than 0');
+        }
     }
 }
