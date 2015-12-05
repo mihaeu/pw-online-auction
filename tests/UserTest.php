@@ -7,23 +7,35 @@ class UserTest extends PHPUnit_Framework_TestCase
 {
     public function testUsersWithSameEmailAreEqual()
     {
-        $nickname = $this->getMockBuilder('Nickname')->disableOriginalConstructor()->getMock();
-        $email1 = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
-        $email1->method('address')->willReturn('one@email.com');
-        $user1 = new User($nickname, $email1);
-        $user2 = new User($nickname, $email1);
+        $user1 = new User($this->mockNickname(), $this->mockEmail('some@email.com'));
+        $user2 = new User($this->mockNickname(), $this->mockEmail('some@email.com'));
         $this->assertTrue($user1->equals($user2));
     }
 
     public function testUsersWithDifferentEmailsAreNotEqual()
     {
-        $nickname = $this->getMockBuilder('Nickname')->disableOriginalConstructor()->getMock();
-        $email1 = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
-        $email1->method('address')->willReturn('one@email.com');
-        $email2 = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
-        $email2->method('address')->willReturn('other@email.com');
-        $user1 = new User($nickname, $email1);
-        $user2 = new User($nickname, $email2);
+        $user1 = new User($this->mockNickname(), $this->mockEmail('one@email.com'));
+        $user2 = new User($this->mockNickname(), $this->mockEmail('other@email.com'));
         $this->assertFalse($user1->equals($user2));
+    }
+
+    /**
+     * @return PHPUnit_Framework_MockObject_MockObject|Nickname
+     */
+    private function mockNickname()
+    {
+        return $this->getMockBuilder('Nickname')->disableOriginalConstructor()->getMock();
+    }
+
+    /**
+     * @return PHPUnit_Framework_MockObject_MockObject|Email
+     */
+    private function mockEmail(string $address = null)
+    {
+        $email = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
+        if (null !== $address) {
+            $email->method('address')->willReturn($address);
+        }
+        return $email;
     }
 }

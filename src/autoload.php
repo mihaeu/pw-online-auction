@@ -15,6 +15,7 @@ spl_autoload_register(
                 'currency' => '/Currency.php',
                 'email' => '/Email.php',
                 'money' => '/Money.php',
+                'nickname' => '/Nickname.php',
                 'user' => '/User.php'
             );
         }
