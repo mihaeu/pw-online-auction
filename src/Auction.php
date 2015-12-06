@@ -172,8 +172,8 @@ class Auction
             throw new InvalidArgumentException('Instant buy price has to be higher than start price');
         }
 
-        if (null !== $this->instantBuyPrice) {
-            throw new InvalidArgumentException('Instant buy price cannot be changed');
+        if (null !== $this->instantBuyPrice && $instantBuyPrice->greaterThan($this->instantBuyPrice)) {
+            throw new InvalidArgumentException('Instant buy price can only be changed if new price is lower');
         }
 
         $this->instantBuyPrice = $instantBuyPrice;

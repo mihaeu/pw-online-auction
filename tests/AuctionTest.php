@@ -141,14 +141,6 @@ class AuctionTest extends BaseTestCase
         $auction->setInstantBuyPrice($this->hundredEuro());
     }
 
-    public function testInstantBuyPriceCannotBeChanged()
-    {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
-
-        $auction->setInstantBuyPrice($this->hundredEuro());
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Instant buy price cannot be changed/');
-        $auction->setInstantBuyPrice($this->hundredEuro());
-    }
     public function testInstantBuyPriceHasToBeHigherThanStartPrice()
     {
         $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
@@ -163,5 +155,29 @@ class AuctionTest extends BaseTestCase
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/instant buy price has not been set/');
         $auction->instantBuy($this->mockUser());
+    }
+
+    public function testInstantBuyPriceCanBeLowered()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction->setInstantBuyPrice($this->hundredEuro());
+        $auction->setInstantBuyPrice($this->tenEuro());
+
+        $buyer = $this->mockUser();
+        $buyer->method('equals')->willReturn(false);
+
+        $auction->instantBuy($buyer);
+        $this->assertEquals($buyer, $auction->winner());
+    }
+
+    public function testInstantBuyPriceCannotBeIncreased()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction->setInstantBuyPrice($this->tenEuro());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/only be changed if new price is lower/');
+        $auction->setInstantBuyPrice($this->hundredEuro());
     }
 }
