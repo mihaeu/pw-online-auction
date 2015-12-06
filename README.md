@@ -6,7 +6,14 @@
 git clone https://github.com/mihaeu/pw-online-auction
 cd pw-online-auction
 
-php phpunit.phar --bootstrap tests/bootstrap.php --testdox tests
+# for unix users
+make testdox
+
+# for mac users
+make testdox-osx
+
+# for windows users or people without make
+php phpunit.phar -c phpunit.xml.dist --bootstrap tests/bootstrap.php --testdox tests
 ```
 
 ## Requirements (by Stefan Priebsch)
