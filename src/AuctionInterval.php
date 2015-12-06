@@ -3,6 +3,9 @@
 class AuctionInterval
 {
     const MIN_DURATION = 1;
+    const DATE_BEFORE_INTERVAL = -1;
+    const DATE_AFTER_INTERVAL = 1;
+    const DATE_IN_INTERVAL = 0;
 
     private $start;
     private $end;
@@ -20,9 +23,23 @@ class AuctionInterval
         $this->end = $end;
     }
 
-    public function dateIsInInterval(DateTimeImmutable $date)
+    /**
+     * @param DateTimeImmutable $date
+     * @return int -1 if date is before the interval, 0 if it is within or 1 of it is after the interval
+     */
+    public function dateIsInInterval(DateTimeImmutable $date) : int
     {
-        return $this->start->diff($date)->invert === 0 && $date->diff($this->end)->invert === 0;
+        // invert indicates if diff is negative
+        if ($this->start->diff($date)->invert === 1) {
+            return self::DATE_BEFORE_INTERVAL;
+        }
+
+        // invert indicates if diff is negative
+        if ($date->diff($this->end)->invert === 1) {
+            return self::DATE_AFTER_INTERVAL;
+        }
+
+        return self::DATE_IN_INTERVAL;
     }
 
     /**
@@ -33,7 +50,6 @@ class AuctionInterval
      */
     private function ensureStartIsBeforeEnd(DateTimeImmutable $start, DateTimeImmutable $end)
     {
-        $diff = $start->diff($end);
         // the invert flag indicates that the diff is negative
         if (1 === $start->diff($end)->invert) {
             throw new InvalidArgumentException('Start has to be before end');

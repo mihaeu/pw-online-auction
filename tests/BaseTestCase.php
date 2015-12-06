@@ -61,4 +61,12 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
     {
         return new Money(100, new Currency('EUR'));
     }
+
+    /**
+     * @return AuctionInterval|PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function mockInterval()
+    {
+        return $this->getMockBuilder('AuctionInterval')->disableOriginalConstructor()->getMock();
+    }
 }

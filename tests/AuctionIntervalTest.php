@@ -17,12 +17,18 @@ class AuctionIntervalTest extends BaseTestCase
     public function testDetectsIfTimeInInterval()
     {
         $ai = new AuctionInterval(new DateTimeImmutable(), new DateTimeImmutable('+2 days'));
-        $this->assertTrue($ai->dateIsInInterval(new DateTimeImmutable('+1 days')));
+        $this->assertEquals(0, $ai->dateIsInInterval(new DateTimeImmutable('+1 days')));
     }
 
-    public function testDetectsIfTimeOutsideInterval()
+    public function testDetectsIfTimeBeforeInterval()
     {
         $ai = new AuctionInterval(new DateTimeImmutable(), new DateTimeImmutable('+2 days'));
-        $this->assertFalse($ai->dateIsInInterval(new DateTimeImmutable('+3 days')));
+        $this->assertEquals(-1, $ai->dateIsInInterval(new DateTimeImmutable('-3 days')));
+    }
+
+    public function testDetectsIfTimeAfterInterval()
+    {
+        $ai = new AuctionInterval(new DateTimeImmutable(), new DateTimeImmutable('+2 days'));
+        $this->assertEquals(1, $ai->dateIsInInterval(new DateTimeImmutable('+3 days')));
     }
 }

@@ -34,7 +34,7 @@ class AuctionTest extends BaseTestCase
 
     public function testUserCanPlaceBid()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
         $bid1 = new Bid(new Money(1, new Currency('EUR')), $this->mockUser());
         $bid2 = new Bid(new Money(2, new Currency('EUR')), $this->mockUser());
         $auction->placeBid($bid1);
@@ -46,7 +46,7 @@ class AuctionTest extends BaseTestCase
     {
         $owner = $this->mockUser();
         $owner->method('equals')->willReturn(true);
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $owner);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $owner);
 
         $this->setExpectedExceptionRegExp(
             InvalidArgumentException::class,
@@ -57,7 +57,7 @@ class AuctionTest extends BaseTestCase
 
     public function testBidHasToBeHigherThanPreviouslyHighestBid()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
 
         $auction->placeBid(new Bid(new Money(100, new Currency('EUR')), $this->mockUser()));
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than highest bid/');
@@ -66,7 +66,7 @@ class AuctionTest extends BaseTestCase
 
     public function testFindsHighestBidder()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(Exception::class, '/No bids/');
         $auction->highestBid();
@@ -74,8 +74,9 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotBidBeforeAuctionStart()
     {
-        $tomorrow = new DateTimeImmutable('tomorrow');
-        $auction = new Auction($this->title, $this->desc, $tomorrow, $this->now, $this->startPrice, $this->mockUser());
+        $interval = $this->getMockBuilder('AuctionInterval')->disableOriginalConstructor()->getMock();
+        $interval->method('dateIsInInterval')->willReturn(-1);
+        $auction = new Auction($this->title, $this->desc, $interval, $this->startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/started/');
         $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
@@ -83,8 +84,9 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotBidAfterAuction()
     {
-        $yesterday = new DateTimeImmutable('yesterday');
-        $auction = new Auction($this->title, $this->desc, $this->now, $yesterday, $this->startPrice, $this->mockUser());
+        $interval = $this->getMockBuilder('AuctionInterval')->disableOriginalConstructor()->getMock();
+        $interval->method('dateIsInInterval')->willReturn(1);
+        $auction = new Auction($this->title, $this->desc, $interval, $this->startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/finished/');
         $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
@@ -95,13 +97,13 @@ class AuctionTest extends BaseTestCase
         $startPrice = new Money(-10, new Currency('EUR'));
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/positive/');
-        new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, $this->mockUser());
+        new Auction($this->title, $this->desc, $this->mockInterval(), $startPrice, $this->mockUser());
     }
 
     public function testBidHasToBeHigherThanStartPrice()
     {
         $startPrice = new Money(10, new Currency('EUR'));
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/higher.*start/');
         $auction->placeBid(new Bid($this->oneEuro(), $this->mockUser()));
@@ -110,7 +112,7 @@ class AuctionTest extends BaseTestCase
     public function testCanActivateInstantBuy()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
         $auction->setInstantBuyPrice($this->hundredEuro());
 
@@ -124,7 +126,7 @@ class AuctionTest extends BaseTestCase
     public function testSellerCannotInstantBuy()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->setInstantBuyPrice($this->hundredEuro());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Seller cannot instant buy/');
@@ -135,7 +137,7 @@ class AuctionTest extends BaseTestCase
     public function testCannotSetInstantBuyLowerThanHighestBid()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/instant buy has to be higher than highest bid/i');
@@ -144,7 +146,7 @@ class AuctionTest extends BaseTestCase
 
     public function testInstantBuyPriceHasToBeHigherThanStartPrice()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->tenEuro(), $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Instant buy price has to be higher/');
         $auction->setInstantBuyPrice($this->oneEuro());
@@ -152,7 +154,7 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotInstantBuyWithoutInstantBuyOption()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->tenEuro(), $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/instant buy price has not been set/');
         $auction->instantBuy($this->mockUser());
@@ -160,7 +162,7 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotBidAfterAuctionIsWon()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
         $auction->setInstantBuyPrice($this->tenEuro());
         $auction->instantBuy($this->mockUser());
 
@@ -170,7 +172,7 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotInstantBuyAfterAuctionIsWon()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
         $auction->setInstantBuyPrice($this->tenEuro());
         $auction->instantBuy($this->mockUser());
 
@@ -181,7 +183,7 @@ class AuctionTest extends BaseTestCase
     public function testInstantBuyPriceCanBeLowered()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->setInstantBuyPrice($this->hundredEuro());
         $auction->setInstantBuyPrice($this->tenEuro());
 
@@ -195,7 +197,7 @@ class AuctionTest extends BaseTestCase
     public function testInstantBuyPriceCannotBeIncreased()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->setInstantBuyPrice($this->tenEuro());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/only be changed if new price is lower/');
@@ -204,9 +206,9 @@ class AuctionTest extends BaseTestCase
 
     public function testInstantBuyOnlyAfterAuctionStart()
     {
-        $seller = $this->mockUser();
-        $tomorrow = new DateTimeImmutable('tomorrow');
-        $auction = new Auction($this->title, $this->desc, $tomorrow, $this->now, $this->startPrice, $seller);
+        $interval = $this->getMockBuilder('AuctionInterval')->disableOriginalConstructor()->getMock();
+        $interval->method('dateIsInInterval')->willReturn(-1);
+        $auction = new Auction($this->title, $this->desc, $interval, $this->startPrice, $this->mockUser());
         $auction->setInstantBuyPrice($this->tenEuro());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction has not started yet/i');
@@ -216,7 +218,7 @@ class AuctionTest extends BaseTestCase
     public function testCanChangeStartPriceBeforeBidsHaveBeenPlaced()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->hundredEuro(), $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->hundredEuro(), $seller);
         $auction->setStartPrice($this->oneEuro());
 
         // this only works because the start price could be lowered
@@ -227,7 +229,7 @@ class AuctionTest extends BaseTestCase
     public function testCannotChangeStartPriceAfterBidsHaveBeenPlaced()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Cannot change start price after bids have been placed/');
@@ -237,7 +239,7 @@ class AuctionTest extends BaseTestCase
     public function testStartPriceCanOnlyBeLowered()
     {
         $seller = $this->mockUser();
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Start price can only be lowered/');
         $auction->setStartPrice($this->tenEuro());
@@ -245,7 +247,7 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotCloseAfterBiddingHasStarted()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
         $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Cannot close auction after bidding has started/');
@@ -254,7 +256,7 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotBidAfterAuctionClosed()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
         $auction->close();
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction.*closed/i');
@@ -263,7 +265,7 @@ class AuctionTest extends BaseTestCase
 
     public function testCannotInstantBuyAfterAuctionClosed()
     {
-        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $this->mockUser());
         $auction->close();
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction.*closed/i');

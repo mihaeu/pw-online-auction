@@ -4,8 +4,7 @@ class Auction
 {
     private $title;
     private $description;
-    private $startTime;
-    private $endTime;
+    private $interval;
     private $seller;
     private $bids;
     private $startPrice;
@@ -28,23 +27,20 @@ class Auction
     /**
      * @param AuctionTitle $title
      * @param AuctionDescription $description
-     * @param DateTimeImmutable $startTime
-     * @param DateTimeImmutable $endTime
+     * @param AuctionInterval $interval
      * @param Money $startPrice
      * @param User $seller
      */
     public function __construct(
         AuctionTitle $title,
         AuctionDescription $description,
-        DateTimeImmutable $startTime,
-        DateTimeImmutable $endTime,
+        AuctionInterval $interval,
         Money $startPrice,
         User $seller
     ) {
         $this->title = $title;
         $this->description = $description;
-        $this->startTime = $startTime;
-        $this->endTime = $endTime;
+        $this->interval = $interval;
         $this->seller = $seller;
 
         $this->ensureStartPriceIsPositive($startPrice);
@@ -110,10 +106,7 @@ class Auction
      */
     private function ensureAuctionHasStarted()
     {
-        $now = new DateTimeImmutable();
-
-        // the invert flag of DateTimeImmutable is set to 1 if the difference is negative
-        if (1 === $this->startTime->diff($now)->invert) {
+        if (AuctionInterval::DATE_BEFORE_INTERVAL === $this->interval->dateIsInInterval(new DateTimeImmutable())) {
             throw new InvalidArgumentException('Auction has not started yet');
         }
     }
@@ -127,10 +120,7 @@ class Auction
             throw new InvalidArgumentException('Auction has already been won');
         }
 
-        $now = new DateTimeImmutable();
-
-        // the invert flag of DateTimeImmutable is set to 1 if the difference is negative
-        if (1 === $now->diff($this->endTime)->invert) {
+        if (AuctionInterval::DATE_AFTER_INTERVAL === $this->interval->dateIsInInterval(new DateTimeImmutable())) {
             throw new InvalidArgumentException('Auction finished');
         }
     }
