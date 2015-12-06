@@ -21,3 +21,6 @@ testdox-osx:
 	 | sed 's/\[x\]/$(OK_COLOR)$\[x]$(NO_COLOR)/' \
 	 | sed -E 's/(\[ \].+)/$(ERROR_COLOR)\1$(NO_COLOR)/' \
 	 | sed -E 's/(^[^ ].+)/$(WARN_COLOR)\1$(NO_COLOR)/'
+
+cov:
+	@php phpunit.phar -c phpunit.xml.dist --bootstrap tests/bootstrap.php --coverage-text

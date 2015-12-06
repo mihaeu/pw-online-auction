@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @covers Email
+ */
 class EmailTest extends \PHPUnit_Framework_TestCase
 {
     public function testAcceptsValidEmail()

@@ -1,5 +1,8 @@
 <?php declare(strict_types = 1);
 
+/**
+ * @covers AuctionDescription
+ */
 class AuctionDescriptionTest extends PHPUnit_Framework_TestCase
 {
     public function testDoesNotAcceptShortDescription()

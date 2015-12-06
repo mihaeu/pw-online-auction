@@ -1,5 +1,8 @@
 <?php declare(strict_types = 1);
 
+/**
+ * @covers AuctionInterval
+ */
 class AuctionIntervalTest extends BaseTestCase
 {
     public function testStartHasToBeBeforeEnd()
