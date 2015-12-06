@@ -50,7 +50,7 @@ class AuctionTest extends BaseTestCase
 
         $this->setExpectedExceptionRegExp(
             InvalidArgumentException::class,
-            '/Auction owner cannot place bids/'
+            '/Seller cannot buy/i'
         );
         $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $owner));
     }
@@ -129,7 +129,7 @@ class AuctionTest extends BaseTestCase
         $auction = new Auction($this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->setInstantBuyPrice($this->hundredEuro());
 
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Seller cannot instant buy/');
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Seller cannot buy/i');
         $seller->method('equals')->willReturn(true);
         $auction->instantBuy($seller);
     }

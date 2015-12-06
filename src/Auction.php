@@ -59,7 +59,7 @@ class Auction
         $this->ensureAuctionHasNotBeenClosed();
         $this->ensureBidIsHigherThanStartPrice($bid);
         $this->ensureNewBidIsHIgherThanLast($bid);
-        $this->ensureBidderIsNotSeller($bid);
+        $this->ensureBidderIsNotSeller($bid->bidder());
 
         $this->bids->addBid($bid);
     }
@@ -90,15 +90,50 @@ class Auction
      */
     public function setStartPrice(Money $startPrice)
     {
-        if ($this->bids->hasBids()) {
-            throw new InvalidArgumentException('Cannot change start price after bids have been placed');
-        }
-
-        if ($startPrice->greaterThan($this->startPrice)) {
-            throw new InvalidArgumentException('Start price can only be lowered');
-        }
+        $this->ensureBiddingHasNotStarted();
+        $this->ensureStartPriceIsLowerThanLast($startPrice);
 
         $this->startPrice = $startPrice;
+    }
+
+    /**
+     * @param Money $instantBuyPrice
+     * @throws InvalidArgumentException
+     */
+    public function setInstantBuyPrice(Money $instantBuyPrice)
+    {
+        $this->ensureInstantBuyIsHigherThanLastBid($instantBuyPrice);
+        $this->ensureInstantBuyPriceIsHigherThanStartPrice($instantBuyPrice);
+        $this->ensureInstantPriceCanOnlyBeLowered($instantBuyPrice);
+
+        $this->instantBuyPrice = $instantBuyPrice;
+    }
+
+    /**
+     * @param User $user
+     * @throws InvalidArgumentException
+     */
+    public function instantBuy(User $user)
+    {
+        $this->ensureAuctionHasStarted();
+        $this->ensureAuctionHasNotEnded();
+        $this->ensureAuctionHasNotBeenClosed();
+        $this->ensureInstantPriceHasBeenSet();
+        $this->ensureBidderIsNotSeller($user);
+
+        $this->winner = $user;
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function close()
+    {
+        if ($this->bids->hasBids()) {
+            throw new InvalidArgumentException('Cannot close auction after bidding has started');
+        }
+
+        $this->closed = true;
     }
 
     /**
@@ -137,13 +172,13 @@ class Auction
     }
 
     /**
-     * @param Bid $bid
+     * @param User $user
      * @throws InvalidArgumentException
      */
-    private function ensureBidderIsNotSeller(Bid $bid)
+    private function ensureBidderIsNotSeller(User $user)
     {
-        if ($bid->bidder()->equals($this->seller)) {
-            throw new InvalidArgumentException('Auction owner cannot place bids');
+        if ($user->equals($this->seller)) {
+            throw new InvalidArgumentException('Seller cannot buy from himself');
         }
     }
 
@@ -170,6 +205,9 @@ class Auction
         }
     }
 
+    /**
+     * @throws InvalidArgumentException
+     */
     private function ensureAuctionHasNotBeenClosed()
     {
         if (true === $this->closed) {
@@ -179,55 +217,56 @@ class Auction
 
     /**
      * @param Money $instantBuyPrice
-     * @throws InvalidArgumentException
+     * @throws Exception
      */
-    public function setInstantBuyPrice(Money $instantBuyPrice)
+    private function ensureInstantBuyIsHigherThanLastBid(Money $instantBuyPrice)
     {
         if ($this->bids->hasBids() && $this->highestBid()->bid()->greaterThan($instantBuyPrice)) {
             throw new InvalidArgumentException('Instant buy has to be higher than highest bid');
         }
+    }
 
+    /**
+     * @param Money $instantBuyPrice
+     */
+    private function ensureInstantBuyPriceIsHigherThanStartPrice(Money $instantBuyPrice)
+    {
         if ($this->startPrice->greaterThan($instantBuyPrice)) {
             throw new InvalidArgumentException('Instant buy price has to be higher than start price');
         }
+    }
 
+    /**
+     * @param Money $instantBuyPrice
+     */
+    private function ensureInstantPriceCanOnlyBeLowered(Money $instantBuyPrice)
+    {
         if (null !== $this->instantBuyPrice && $instantBuyPrice->greaterThan($this->instantBuyPrice)) {
             throw new InvalidArgumentException('Instant buy price can only be changed if new price is lower');
         }
-
-        $this->instantBuyPrice = $instantBuyPrice;
     }
 
-    /**
-     * @param User $user
-     * @throws InvalidArgumentException
-     */
-    public function instantBuy(User $user)
+    private function ensureInstantPriceHasBeenSet()
     {
-        $this->ensureAuctionHasStarted();
-        $this->ensureAuctionHasNotEnded();
-        $this->ensureAuctionHasNotBeenClosed();
-
         if (null === $this->instantBuyPrice) {
             throw new InvalidArgumentException('Cannot instant buy, instant buy price has not been set');
         }
+    }
 
-        if ($user->equals($this->seller)) {
-            throw new InvalidArgumentException('Seller cannot instant buy');
+    private function ensureBiddingHasNotStarted()
+    {
+        if ($this->bids->hasBids()) {
+            throw new InvalidArgumentException('Cannot change start price after bids have been placed');
         }
-
-        $this->winner = $user;
     }
 
     /**
-     * @throws InvalidArgumentException
+     * @param Money $startPrice
      */
-    public function close()
+    private function ensureStartPriceIsLowerThanLast(Money $startPrice)
     {
-        if ($this->bids->hasBids()) {
-            throw new InvalidArgumentException('Cannot close auction after bidding has started');
+        if ($startPrice->greaterThan($this->startPrice)) {
+            throw new InvalidArgumentException('Start price can only be lowered');
         }
-
-        $this->closed = true;
     }
 }
