@@ -181,4 +181,34 @@ class AuctionTest extends BaseTestCase
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/only be changed if new price is lower/');
         $auction->setInstantBuyPrice($this->hundredEuro());
     }
+
+    public function testCanChangeStartPriceBeforeBidsHaveBeenPlaced()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->hundredEuro(), $seller);
+        $auction->setStartPrice($this->oneEuro());
+
+        // this only works because the start price could be lowered
+        $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
+        $this->assertEquals($this->tenEuro(), $auction->highestBid()->bid());
+    }
+
+    public function testCannotChangeStartPriceAfterBidsHaveBeenPlaced()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Cannot change start price after bids have been placed/');
+        $auction->setStartPrice($this->tenEuro());
+    }
+
+    public function testStartPriceCanOnlyBeLowered()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Start price can only be lowered/');
+        $auction->setStartPrice($this->tenEuro());
+    }
 }

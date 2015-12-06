@@ -84,6 +84,22 @@ class Auction
     }
 
     /**
+     * @param Money $startPrice
+     */
+    public function setStartPrice(Money $startPrice)
+    {
+        if ($this->bids->hasBids()) {
+            throw new InvalidArgumentException('Cannot change start price after bids have been placed');
+        }
+
+        if ($startPrice->greaterThan($this->startPrice)) {
+            throw new InvalidArgumentException('Start price can only be lowered');
+        }
+
+        $this->startPrice = $startPrice;
+    }
+
+    /**
      * @throws InvalidArgumentException
      */
     private function ensureAuctionHasStarted()
