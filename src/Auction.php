@@ -11,6 +11,16 @@ class Auction
     private $startPrice;
 
     /**
+     * @var Money
+     */
+    private $instantBuyPrice = null;
+
+    /**
+     * @var User
+     */
+    private $winner = null;
+
+    /**
      * @param AuctionTitle $title
      * @param AuctionDescription $description
      * @param DateTimeImmutable $startTime
@@ -66,6 +76,14 @@ class Auction
     }
 
     /**
+     * @return User
+     */
+    public function winner() : User
+    {
+        return $this->winner;
+    }
+
+    /**
      * @throws InvalidArgumentException
      */
     private function ensureAuctionHasStarted()
@@ -83,6 +101,10 @@ class Auction
      */
     private function ensureAuctionHasNotEnded()
     {
+        if (null !== $this->winner) {
+            throw new InvalidArgumentException('Auction has already been won');
+        }
+
         $now = new DateTimeImmutable();
 
         // the invert flag of DateTimeImmutable is set to 1 if the difference is negative
@@ -134,5 +156,43 @@ class Auction
         if ($this->startPrice->greaterThan($bid->bid())) {
             throw new InvalidArgumentException('Bid has to be higher than start price');
         }
+    }
+
+    /**
+     * @param Money $instantBuyPrice
+     * @throws InvalidArgumentException
+     */
+    public function setInstantBuyPrice(Money $instantBuyPrice)
+    {
+        if ($this->bids->hasBids()) {
+            throw new InvalidArgumentException('Cannot set instant buy once bidding has started');
+        }
+
+        if ($this->startPrice->greaterThan($instantBuyPrice)) {
+            throw new InvalidArgumentException('Instant buy price has to be higher than start price');
+        }
+
+        if (null !== $this->instantBuyPrice) {
+            throw new InvalidArgumentException('Instant buy price cannot be changed');
+        }
+
+        $this->instantBuyPrice = $instantBuyPrice;
+    }
+
+    /**
+     * @param User $user
+     * @throws InvalidArgumentException
+     */
+    public function instantBuy(User $user)
+    {
+        if (null === $this->instantBuyPrice) {
+            throw new InvalidArgumentException('Cannot instant buy, instant buy price has not been set');
+        }
+
+        if ($user->equals($this->seller)) {
+            throw new InvalidArgumentException('Seller cannot instant buy');
+        }
+
+        $this->winner = $user;
     }
 }

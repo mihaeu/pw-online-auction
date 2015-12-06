@@ -13,8 +13,7 @@ php phpunit.phar --bootstrap tests/bootstrap.php --testdox tests
 
 ### 1. Online-Auktion
 
-Implementieren Sie die Geschäftslogik für eine Online-Auktion mit den folgenden
-Geschäftsregeln:
+Implementieren Sie die Geschäftslogik für eine Online-Auktion mit den folgenden Geschäftsregeln:
 
 ✓ Ein Benutzer hat einen Nicknamen und eine E-Mail-Adresse.
 
@@ -34,13 +33,13 @@ Geschäftsregeln:
 
 Erweiern Sie die Online-Auktion um ein "Sofortkauf"-Feature. 
 
-✗ Für jede Auktion kann dieses Feature optional aktiviert werden, so lange noch kein Gebot abgegeben wurde.
+✓ Für jede Auktion kann dieses Feature optional aktiviert werden, so lange noch kein Gebot abgegeben wurde.
 
-✗ Ist das Feature für eine Auktion einmal aktiviert, kann es nicht mehr abgeschaltet werden.
+✓ Ist das Feature für eine Auktion einmal aktiviert, kann es nicht mehr abgeschaltet werden.
 
-✗ Für den Sofortkauf muss ein Preis angegben werden, der höher ist als der Startpreis.
+✓ Für den Sofortkauf muss ein Preis angegeben werden, der höher ist als der Startpreis.
 
-✗ Der Sofortkauf-Preis kann nicht geändert werden.
+✓ Der Sofortkauf-Preis kann nicht geändert werden.
 
 ### 3. Veränderte Geschäftsregeln
 

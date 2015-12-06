@@ -104,6 +104,64 @@ class AuctionTest extends BaseTestCase
         $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $startPrice, $this->mockUser());
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/higher.*start/');
-        $auction->placeBid(new Bid(new Money(1, new Currency('EUR')), $this->mockUser()));
+        $auction->placeBid(new Bid($this->oneEuro(), $this->mockUser()));
+    }
+
+    public function testCanActivateInstantBuy()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction->setInstantBuyPrice($this->hundredEuro());
+
+        $buyer = $this->mockUser();
+        $buyer->method('equals')->willReturn(false);
+
+        $auction->instantBuy($buyer);
+        $this->assertEquals($buyer, $auction->winner());
+    }
+
+    public function testSellerCannotInstantBuy()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction->setInstantBuyPrice($this->hundredEuro());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Seller cannot instant buy/');
+        $seller->method('equals')->willReturn(true);
+        $auction->instantBuy($seller);
+    }
+
+    public function testCannotActivateInstantBuyAfterBiddingStarted()
+    {
+        $seller = $this->mockUser();
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $seller);
+        $auction->placeBid(new Bid($this->startPrice, $this->mockUser()));
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Cannot.*bidding.*started/');
+        $auction->setInstantBuyPrice($this->hundredEuro());
+    }
+
+    public function testInstantBuyPriceCannotBeChanged()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
+
+        $auction->setInstantBuyPrice($this->hundredEuro());
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Instant buy price cannot be changed/');
+        $auction->setInstantBuyPrice($this->hundredEuro());
+    }
+    public function testInstantBuyPriceHasToBeHigherThanStartPrice()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Instant buy price has to be higher/');
+        $auction->setInstantBuyPrice($this->oneEuro());
+    }
+
+    public function testCannotInstantBuyWithoutInstantBuyOption()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->tenEuro(), $this->mockUser());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/instant buy price has not been set/');
+        $auction->instantBuy($this->mockUser());
     }
 }

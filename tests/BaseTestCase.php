@@ -37,4 +37,28 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
         }
         return $email;
     }
+
+    /**
+     * @return Money
+     */
+    protected function oneEuro() : Money
+    {
+        return new Money(1, new Currency('EUR'));
+    }
+
+    /**
+     * @return Money
+     */
+    protected function tenEuro() : Money
+    {
+        return new Money(10, new Currency('EUR'));
+    }
+
+    /**
+     * @return Money
+     */
+    protected function hundredEuro() : Money
+    {
+        return new Money(100, new Currency('EUR'));
+    }
 }
