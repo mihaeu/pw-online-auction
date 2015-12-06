@@ -1,0 +1,21 @@
+language: php
+
+php:
+ - 7.0
+
+before_script:
+   - composer require satooshi/php-coveralls:dev-master
+
+script:
+  - mkdir -p build/logs
+  - php phpunit.phar --coverage-text --coverage-clover ./build/logs/clover.xml
+
+after_script:
+  - php vendor/bin/coveralls -v
+
+notifications:
+  email:
+    recipients:
+      - haeuslmann@gmail.com
+    on_success: never
+    on_failure: always

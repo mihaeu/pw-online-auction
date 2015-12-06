@@ -1,5 +1,9 @@
 # Online Auction
 
+[![Build Status](https://travis-ci.org/mihaeu/pw-online-auction.svg?branch=develop)](https://travis-ci.org/mihaeu/pw-online-auction)
+[![Coverage Status](https://coveralls.io/repos/mihaeu/pw-online-auction/badge.svg?branch=develop&service=github)](https://coveralls.io/github/mihaeu/pw-online-auction?branch=develop)
+![PHP v7](https://img.shields.io/badge/PHP-%3E%3D7-blue.svg)
+
 ## Getting started
 
 ```bash
