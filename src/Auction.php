@@ -58,7 +58,7 @@ class Auction
         $this->ensureAuctionHasNotEnded();
         $this->ensureAuctionHasNotBeenClosed();
         $this->ensureBidIsHigherThanStartPrice($bid);
-        $this->ensureNewBidIsHIgherThanLast($bid);
+        $this->ensureBidIsHIgherThanLast($bid);
         $this->ensureBidderIsNotSeller($bid->bidder());
 
         $this->bids->addBid($bid);
@@ -161,10 +161,31 @@ class Auction
     }
 
     /**
+     * @throws InvalidArgumentException
+     */
+    private function ensureAuctionHasNotBeenClosed()
+    {
+        if (true === $this->closed) {
+            throw new InvalidArgumentException('Auction has been closed');
+        }
+    }
+
+    /**
      * @param Bid $bid
      * @throws InvalidArgumentException
      */
-    private function ensureNewBidIsHIgherThanLast(Bid $bid)
+    private function ensureBidIsHigherThanStartPrice(Bid $bid)
+    {
+        if ($this->startPrice->greaterThan($bid->bid())) {
+            throw new InvalidArgumentException('Bid has to be higher than start price');
+        }
+    }
+
+    /**
+     * @param Bid $bid
+     * @throws InvalidArgumentException
+     */
+    private function ensureBidIsHIgherThanLast(Bid $bid)
     {
         if ($this->bids->hasBids() && $this->bids->findHighest()->isHigherThan($bid)) {
             throw new InvalidArgumentException('Bid must be higher than highest bid');
@@ -181,6 +202,13 @@ class Auction
             throw new InvalidArgumentException('Seller cannot buy from himself');
         }
     }
+    
+    private function ensureBiddingHasNotStarted()
+    {
+        if ($this->bids->hasBids()) {
+            throw new InvalidArgumentException('Cannot change start price after bids have been placed');
+        }
+    }
 
     /**
      * @param Money $startPrice
@@ -195,23 +223,12 @@ class Auction
     }
 
     /**
-     * @param Bid $bid
-     * @throws InvalidArgumentException
+     * @param Money $startPrice
      */
-    private function ensureBidIsHigherThanStartPrice(Bid $bid)
+    private function ensureStartPriceIsLowerThanLast(Money $startPrice)
     {
-        if ($this->startPrice->greaterThan($bid->bid())) {
-            throw new InvalidArgumentException('Bid has to be higher than start price');
-        }
-    }
-
-    /**
-     * @throws InvalidArgumentException
-     */
-    private function ensureAuctionHasNotBeenClosed()
-    {
-        if (true === $this->closed) {
-            throw new InvalidArgumentException('Auction has been closed');
+        if ($startPrice->greaterThan($this->startPrice)) {
+            throw new InvalidArgumentException('Start price can only be lowered');
         }
     }
 
@@ -250,23 +267,6 @@ class Auction
     {
         if (null === $this->instantBuyPrice) {
             throw new InvalidArgumentException('Cannot instant buy, instant buy price has not been set');
-        }
-    }
-
-    private function ensureBiddingHasNotStarted()
-    {
-        if ($this->bids->hasBids()) {
-            throw new InvalidArgumentException('Cannot change start price after bids have been placed');
-        }
-    }
-
-    /**
-     * @param Money $startPrice
-     */
-    private function ensureStartPriceIsLowerThanLast(Money $startPrice)
-    {
-        if ($startPrice->greaterThan($this->startPrice)) {
-            throw new InvalidArgumentException('Start price can only be lowered');
         }
     }
 }
