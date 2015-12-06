@@ -49,7 +49,7 @@ Erweiern Sie die Online-Auktion um ein "Sofortkauf"-Feature.
 
 ✓ Der Startpreis einer Auktion kann nur nach unten geändert werden, so lange noch keine Gebote abgegeben wurden.
 
-✗ Eine Auktion kann vom Eigentümer vorzeitig beendet werden, so lange es noch keine Gebote gibt.
+✓ Eine Auktion kann vom Eigentümer vorzeitig beendet werden, so lange es noch keine Gebote gibt.
 
 ### Zur Vorgehensweise:
 

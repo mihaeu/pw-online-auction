@@ -242,4 +242,31 @@ class AuctionTest extends BaseTestCase
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Start price can only be lowered/');
         $auction->setStartPrice($this->tenEuro());
     }
+
+    public function testCannotCloseAfterBiddingHasStarted()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Cannot close auction after bidding has started/');
+        $auction->close();
+    }
+
+    public function testCannotBidAfterAuctionClosed()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction->close();
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction.*closed/i');
+        $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
+    }
+
+    public function testCannotInstantBuyAfterAuctionClosed()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction->close();
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction.*closed/i');
+        $auction->instantBuy($this->mockUser());
+    }
 }

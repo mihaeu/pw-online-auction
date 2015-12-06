@@ -21,6 +21,11 @@ class Auction
     private $winner = null;
 
     /**
+     * @var bool
+     */
+    private $closed = false;
+
+    /**
      * @param AuctionTitle $title
      * @param AuctionDescription $description
      * @param DateTimeImmutable $startTime
@@ -55,6 +60,7 @@ class Auction
     {
         $this->ensureAuctionHasStarted();
         $this->ensureAuctionHasNotEnded();
+        $this->ensureAuctionHasNotBeenClosed();
         $this->ensureBidIsHigherThanStartPrice($bid);
         $this->ensureNewBidIsHIgherThanLast($bid);
         $this->ensureBidderIsNotSeller($bid);
@@ -174,6 +180,13 @@ class Auction
         }
     }
 
+    private function ensureAuctionHasNotBeenClosed()
+    {
+        if (true === $this->closed) {
+            throw new InvalidArgumentException('Auction has been closed');
+        }
+    }
+
     /**
      * @param Money $instantBuyPrice
      * @throws InvalidArgumentException
@@ -203,6 +216,7 @@ class Auction
     {
         $this->ensureAuctionHasStarted();
         $this->ensureAuctionHasNotEnded();
+        $this->ensureAuctionHasNotBeenClosed();
 
         if (null === $this->instantBuyPrice) {
             throw new InvalidArgumentException('Cannot instant buy, instant buy price has not been set');
@@ -213,5 +227,17 @@ class Auction
         }
 
         $this->winner = $user;
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    public function close()
+    {
+        if ($this->bids->hasBids()) {
+            throw new InvalidArgumentException('Cannot close auction after bidding has started');
+        }
+
+        $this->closed = true;
     }
 }
