@@ -8,6 +8,7 @@ spl_autoload_register(
         if ($classes === null) {
             $classes = array(
                 'auctiondescriptiontest' => '/AuctionDescriptionTest.php',
+                'auctionintervaltest' => '/AuctionIntervalTest.php',
                 'auctiontest' => '/AuctionTest.php',
                 'auctiontitletest' => '/AuctionTitleTest.php',
                 'basetestcase' => '/BaseTestCase.php',

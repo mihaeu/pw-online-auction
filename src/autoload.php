@@ -9,6 +9,7 @@ spl_autoload_register(
             $classes = array(
                 'auction' => '/Auction.php',
                 'auctiondescription' => '/AuctionDescription.php',
+                'auctioninterval' => '/AuctionInterval.php',
                 'auctiontitle' => '/AuctionTitle.php',
                 'bid' => '/Bid.php',
                 'bidcollection' => '/BidCollection.php',
