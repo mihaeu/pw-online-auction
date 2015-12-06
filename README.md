@@ -45,7 +45,7 @@ Erweiern Sie die Online-Auktion um ein "Sofortkauf"-Feature.
 
 Ändern Sie die folgenden Geschäftsregeln der Online-Auktion: 
 
-✗ Der Sofortkauf-Preis kann nach unten geändert werden, solange er das aktuelle Gebot nicht unterschreitet.
+✓ Der Sofortkauf-Preis kann nach unten geändert werden, solange er das aktuelle Gebot nicht unterschreitet.
 
 ✗ Der Startpreis einer Auktion kann nur nach unten geändert werden, so lange noch keine Gebote abgegeben wurden.
 

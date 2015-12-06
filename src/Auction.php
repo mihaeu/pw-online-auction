@@ -164,8 +164,8 @@ class Auction
      */
     public function setInstantBuyPrice(Money $instantBuyPrice)
     {
-        if ($this->bids->hasBids()) {
-            throw new InvalidArgumentException('Cannot set instant buy once bidding has started');
+        if ($this->bids->hasBids() && $this->highestBid()->bid()->greaterThan($instantBuyPrice)) {
+            throw new InvalidArgumentException('Instant buy has to be higher than highest bid');
         }
 
         if ($this->startPrice->greaterThan($instantBuyPrice)) {
