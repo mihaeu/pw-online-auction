@@ -158,6 +158,26 @@ class AuctionTest extends BaseTestCase
         $auction->instantBuy($this->mockUser());
     }
 
+    public function testCannotBidAfterAuctionIsWon()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction->setInstantBuyPrice($this->tenEuro());
+        $auction->instantBuy($this->mockUser());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has already been won/');
+        $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
+    }
+
+    public function testCannotInstantBuyAfterAuctionIsWon()
+    {
+        $auction = new Auction($this->title, $this->desc, $this->now, $this->now, $this->startPrice, $this->mockUser());
+        $auction->setInstantBuyPrice($this->tenEuro());
+        $auction->instantBuy($this->mockUser());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has already been won/');
+        $auction->instantBuy($this->mockUser());
+    }
+
     public function testInstantBuyPriceCanBeLowered()
     {
         $seller = $this->mockUser();
@@ -180,6 +200,17 @@ class AuctionTest extends BaseTestCase
 
         $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/only be changed if new price is lower/');
         $auction->setInstantBuyPrice($this->hundredEuro());
+    }
+
+    public function testInstantBuyOnlyAfterAuctionStart()
+    {
+        $seller = $this->mockUser();
+        $tomorrow = new DateTimeImmutable('tomorrow');
+        $auction = new Auction($this->title, $this->desc, $tomorrow, $this->now, $this->startPrice, $seller);
+        $auction->setInstantBuyPrice($this->tenEuro());
+
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction has not started yet/i');
+        $auction->instantBuy($this->mockUser());
     }
 
     public function testCanChangeStartPriceBeforeBidsHaveBeenPlaced()

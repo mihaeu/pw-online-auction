@@ -201,6 +201,9 @@ class Auction
      */
     public function instantBuy(User $user)
     {
+        $this->ensureAuctionHasStarted();
+        $this->ensureAuctionHasNotEnded();
+
         if (null === $this->instantBuyPrice) {
             throw new InvalidArgumentException('Cannot instant buy, instant buy price has not been set');
         }
