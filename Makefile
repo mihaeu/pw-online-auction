@@ -7,7 +7,7 @@ phpab:
 	php phpab.phar -o src/autoload.php src
 	php phpab.phar -o tests/autoload.php tests
 
-phpunit:
+test:
 	php phpunit.phar -c phpunit.xml.dist --bootstrap tests/bootstrap.php tests
 
 testdox:
