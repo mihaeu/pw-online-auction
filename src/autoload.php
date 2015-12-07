@@ -15,6 +15,7 @@ spl_autoload_register(
                 'bidcollection' => '/BidCollection.php',
                 'currency' => '/Currency.php',
                 'email' => '/Email.php',
+                'instantbuyauction' => '/InstantBuyAuction.php',
                 'money' => '/Money.php',
                 'nickname' => '/Nickname.php',
                 'user' => '/User.php'

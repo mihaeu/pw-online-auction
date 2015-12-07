@@ -18,6 +18,7 @@ spl_autoload_register(
                 'createusdtrait' => '/CreateUsdTrait.php',
                 'currencytest' => '/CurrencyTest.php',
                 'emailtest' => '/EmailTest.php',
+                'instantbuyauctiontest' => '/InstantBuyAuctionTest.php',
                 'moneytest' => '/MoneyTest.php',
                 'nicknametest' => '/NicknameTest.php',
                 'usertest' => '/UserTest.php'
