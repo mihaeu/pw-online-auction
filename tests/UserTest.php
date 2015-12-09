@@ -3,8 +3,10 @@
 /**
  * @covers User
  */
-class UserTest extends BaseTestCase
+class UserTest extends PHPUnit_Framework_TestCase
 {
+    use UserHelperTrait;
+
     public function testUsersWithSameEmailAreEqual()
     {
         $user1 = new User($this->mockNickname(), $this->mockEmail('some@email.com'));

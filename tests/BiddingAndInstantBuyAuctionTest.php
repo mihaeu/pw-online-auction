@@ -11,8 +11,12 @@
  * @uses AuctionDescription
  * @uses BidCollection
  */
-class BiddingAndInstantBuyAuctionTest extends BaseTestCase
+class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
 {
+    use MoneyHelperTrait;
+    use UserHelperTrait;
+    use AuctionHelperTrait;
+
     /**
      * @var AuctionTitle
      */

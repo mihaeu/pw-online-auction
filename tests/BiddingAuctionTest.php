@@ -9,8 +9,12 @@
  * @uses Bid
  * @uses BidCollection
  */
-class BiddingAuctionTest extends BaseTestCase
+class BiddingAuctionTest extends PHPUnit_Framework_TestCase
 {
+    use MoneyHelperTrait;
+    use UserHelperTrait;
+    use AuctionHelperTrait;
+
     /**
      * @var DateTimeImmutable
      */
@@ -231,12 +235,20 @@ class BiddingAuctionTest extends BaseTestCase
         );
         $auction->close();
 
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/auction.*closed/i');
+        $this->setExpectedExceptionRegExp(
+            InvalidArgumentException::class,
+            '/auction.*closed/i'
+        );
         $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
     }
 
+    /**
+     * @return BiddingAuction
+     */
     public function testReturnsWinnerAfterAuctionEnd()
     {
+        // we have to mock the AuctionInterval in order to simulate the
+        // time frame during and after the auction without slowing down tests
         $interval = $this->mockInterval();
         $interval->method('dateIsInInterval')->will($this->onConsecutiveCalls(
             0, // 1st bid start time check

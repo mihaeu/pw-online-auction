@@ -6,8 +6,7 @@
  */
 class MoneyTest extends \PHPUnit_Framework_TestCase
 {
-    use CreateMoneyTrait;
-    use CreateUsdTrait;
+    use MoneyHelperTrait;
 
     public function testAmountCanBeRetrieved()
     {

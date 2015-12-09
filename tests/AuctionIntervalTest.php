@@ -3,7 +3,7 @@
 /**
  * @covers AuctionInterval
  */
-class AuctionIntervalTest extends BaseTestCase
+class AuctionIntervalTest extends PHPUnit_Framework_TestCase
 {
     public function testStartHasToBeBeforeEnd()
     {

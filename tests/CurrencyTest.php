@@ -5,19 +5,16 @@
  */
 class CurrencyTest extends \PHPUnit_Framework_TestCase
 {
-    use CreateUsdTrait;
+    use MoneyHelperTrait;
 
     public function testSupportsEur()
     {
         $this->assertInstanceOf(Currency::class, new Currency('EUR'));
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Unsupported currency
-     */
     public function testDoesNotSupportNonEurCurrency()
     {
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Unsupported currency/');
         new Currency('no-EUR');
     }
 

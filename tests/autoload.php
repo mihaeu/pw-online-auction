@@ -8,19 +8,19 @@ spl_autoload_register(
         if ($classes === null) {
             $classes = array(
                 'auctiondescriptiontest' => '/AuctionDescriptionTest.php',
+                'auctionhelpertrait' => '/AuctionHelperTrait.php',
                 'auctionintervaltest' => '/AuctionIntervalTest.php',
                 'auctiontitletest' => '/AuctionTitleTest.php',
-                'basetestcase' => '/BaseTestCase.php',
                 'bidcollectiontest' => '/BidCollectionTest.php',
+                'biddingandinstantbuyauctiontest' => '/BiddingAndInstantBuyAuctionTest.php',
                 'biddingauctiontest' => '/BiddingAuctionTest.php',
                 'bidtest' => '/BidTest.php',
-                'createmoneytrait' => '/CreateMoneyTrait.php',
-                'createusdtrait' => '/CreateUsdTrait.php',
                 'currencytest' => '/CurrencyTest.php',
                 'emailtest' => '/EmailTest.php',
-                'instantbuyauctiontest' => '/BiddingAndInstantBuyAuctionTest.php',
+                'moneyhelpertrait' => '/MoneyHelperTrait.php',
                 'moneytest' => '/MoneyTest.php',
                 'nicknametest' => '/NicknameTest.php',
+                'userhelpertrait' => '/UserHelperTrait.php',
                 'usertest' => '/UserTest.php'
             );
         }

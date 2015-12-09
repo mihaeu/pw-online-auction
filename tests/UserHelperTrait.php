@@ -1,17 +1,17 @@
 <?php declare(strict_types = 1);
 
-class BaseTestCase extends PHPUnit_Framework_TestCase
+trait UserHelperTrait
 {
     /**
-     * @param string|null $address
+     * @param string|null $emailAddress
      * @return PHPUnit_Framework_MockObject_MockObject|User
      */
-    protected function mockUser(string $address = null)
+    protected function mockUser(string $emailAddress = null)
     {
         $user = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
-        if (null !== $address) {
+        if (null !== $emailAddress) {
             $email = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
-            $email->method('address')->willReturn($address);
+            $email->method('address')->willReturn($emailAddress);
             $user->method('email')->willReturn($email);
         }
         return $user;
@@ -36,37 +36,5 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
             $email->method('address')->willReturn($emailAddress);
         }
         return $email;
-    }
-
-    /**
-     * @return Money
-     */
-    protected function oneEuro() : Money
-    {
-        return new Money(1, new Currency('EUR'));
-    }
-
-    /**
-     * @return Money
-     */
-    protected function tenEuro() : Money
-    {
-        return new Money(10, new Currency('EUR'));
-    }
-
-    /**
-     * @return Money
-     */
-    protected function hundredEuro() : Money
-    {
-        return new Money(100, new Currency('EUR'));
-    }
-
-    /**
-     * @return AuctionInterval|PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function mockInterval()
-    {
-        return $this->getMockBuilder('AuctionInterval')->disableOriginalConstructor()->getMock();
     }
 }

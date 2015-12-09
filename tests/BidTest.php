@@ -5,9 +5,10 @@
  * @uses Money
  * @uses Currency
  */
-class BidTest extends BaseTestCase
+class BidTest extends PHPUnit_Framework_TestCase
 {
-    use CreateMoneyTrait;
+    use MoneyHelperTrait;
+    use UserHelperTrait;
 
     public function testReturnsBid()
     {

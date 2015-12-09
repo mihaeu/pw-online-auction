@@ -6,9 +6,10 @@
  * @uses Currency
  * @uses Bid
  */
-class BidCollectionTest extends BaseTestCase
+class BidCollectionTest extends PHPUnit_Framework_TestCase
 {
-    use CreateMoneyTrait;
+    use MoneyHelperTrait;
+    use UserHelperTrait;
 
     public function testHighestBidWithoutBidsIs0()
     {
