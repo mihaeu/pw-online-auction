@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-class Auction
+class BiddingAuction
 {
     private $title;
     private $description;
@@ -52,7 +52,6 @@ class Auction
     {
         $this->ensureAuctionHasStarted();
         $this->ensureAuctionHasNotEnded();
-        $this->ensureAuctionHasNotBeenClosed();
         $this->ensureBidIsHigherThanStartPrice($bid);
         $this->ensureBidIsHIgherThanLast($bid);
         $this->ensureBidderIsNotSeller($bid->bidder());
@@ -78,6 +77,12 @@ class Auction
      */
     public function winner() : User
     {
+        if (null === $this->winner
+            && $this->auctionRanOutOfTime()
+            && $this->bids->hasBids()) {
+            return $this->highestBid()->bidder();
+        }
+
         return $this->winner;
     }
 
@@ -119,13 +124,9 @@ class Auction
      */
     protected function ensureAuctionHasNotEnded()
     {
-        if (null !== $this->winner) {
-            throw new InvalidArgumentException('Auction has already been won');
-        }
-
-        if (AuctionInterval::DATE_AFTER_INTERVAL === $this->interval->dateIsInInterval(new DateTimeImmutable())) {
-            throw new InvalidArgumentException('Auction finished');
-        }
+        $this->ensureAuctionHasNotBeenClosed();
+        $this->ensureAuctionHasNotBeenWonAlready();
+        $this->ensureAuctionHasNotRunOutOfTime();
     }
 
     /**
@@ -170,7 +171,10 @@ class Auction
             throw new InvalidArgumentException('Seller cannot buy from himself');
         }
     }
-    
+
+    /**
+     * @throws InvalidArgumentException
+     */
     private function ensureBiddingHasNotStarted()
     {
         if ($this->bids->hasBids()) {
@@ -192,11 +196,41 @@ class Auction
 
     /**
      * @param Money $startPrice
+     * @throws InvalidArgumentException
      */
     private function ensureStartPriceIsLowerThanLast(Money $startPrice)
     {
         if ($startPrice->greaterThan($this->startPrice)) {
             throw new InvalidArgumentException('Start price can only be lowered');
         }
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    protected function ensureAuctionHasNotBeenWonAlready()
+    {
+        if (null !== $this->winner) {
+            throw new InvalidArgumentException('Auction has already been won');
+        }
+    }
+
+    /**
+     * @throws InvalidArgumentException
+     */
+    protected function ensureAuctionHasNotRunOutOfTime()
+    {
+        if ($this->auctionRanOutOfTime()) {
+            throw new InvalidArgumentException('Auction finished');
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    private function auctionRanOutOfTime() : bool
+    {
+        return AuctionInterval::DATE_AFTER_INTERVAL
+            === $this->interval->dateIsInInterval(new DateTimeImmutable());
     }
 }

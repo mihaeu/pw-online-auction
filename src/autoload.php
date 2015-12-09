@@ -7,15 +7,15 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
-                'auction' => '/Auction.php',
                 'auctiondescription' => '/AuctionDescription.php',
                 'auctioninterval' => '/AuctionInterval.php',
                 'auctiontitle' => '/AuctionTitle.php',
                 'bid' => '/Bid.php',
                 'bidcollection' => '/BidCollection.php',
+                'biddingandinstantbuyauction' => '/BiddingAndInstantBuyAuction.php',
+                'biddingauction' => '/BiddingAuction.php',
                 'currency' => '/Currency.php',
                 'email' => '/Email.php',
-                'instantbuyauction' => '/InstantBuyAuction.php',
                 'money' => '/Money.php',
                 'nickname' => '/Nickname.php',
                 'user' => '/User.php'

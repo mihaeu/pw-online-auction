@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-class InstantBuyAuction extends Auction
+class BiddingAndInstantBuyAuction extends BiddingAuction
 {
     /**
      * @var Money
@@ -28,7 +28,6 @@ class InstantBuyAuction extends Auction
     {
         $this->ensureAuctionHasStarted();
         $this->ensureAuctionHasNotEnded();
-        $this->ensureAuctionHasNotBeenClosed();
         $this->ensureInstantPriceHasBeenSet();
         $this->ensureBidderIsNotSeller($user);
 

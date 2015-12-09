@@ -10,7 +10,7 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
     {
         $user = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
         if (null !== $address) {
-            $email = $this->getMockBuilder('Email')->getMock();
+            $email = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
             $email->method('address')->willReturn($address);
             $user->method('email')->willReturn($email);
         }
@@ -26,14 +26,14 @@ class BaseTestCase extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $address
+     * @param string $emailAddress
      * @return Email|PHPUnit_Framework_MockObject_MockObject
      */
-    protected function mockEmail(string $address = null)
+    protected function mockEmail(string $emailAddress = null)
     {
         $email = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
-        if (null !== $address) {
-            $email->method('address')->willReturn($address);
+        if (null !== $emailAddress) {
+            $email->method('address')->willReturn($emailAddress);
         }
         return $email;
     }
