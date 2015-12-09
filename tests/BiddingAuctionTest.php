@@ -257,5 +257,18 @@ class BiddingAuctionTest extends BaseTestCase
         $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
         $auction->placeBid(new Bid($this->hundredEuro(), $highestBidder));
         $this->assertEquals($highestBidder, $auction->winner());
+
+        return $auction;
+    }
+
+    /**
+     * @depends testReturnsWinnerAfterAuctionEnd
+     *
+     * @param BiddingAuction $auction
+     */
+    public function testCannotPlaceBidAfterAuctionHasBeenWon(BiddingAuction $auction)
+    {
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has.*won/');
+        $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
     }
 }

@@ -80,7 +80,7 @@ class BiddingAuction
         if (null === $this->winner
             && $this->auctionRanOutOfTime()
             && $this->bids->hasBids()) {
-            return $this->highestBid()->bidder();
+            $this->winner = $this->highestBid()->bidder();
         }
 
         return $this->winner;
