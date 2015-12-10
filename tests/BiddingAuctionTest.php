@@ -275,27 +275,29 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
     public function testReturnsWinnerAfterAuctionEnd()
     {
         //-------------------------------------
-        // Approach A: easy to understand
+        // Approach A: easy to understand and better unit test
         //-------------------------------------
 
-        // mock: bids have already been placed, but better unit test?
+        // inject so that bids have already been placed
         $bids = new BidCollection();
         $bids->addBid(new Bid($this->tenEuro(), $this->mockUser()));
+
+        $highestBidder = $this->mockUser();
+        $bids->addBid(new Bid($this->hundredEuro(), $highestBidder));
 
         // mock: Auction finished
         $interval = $this->mockInterval();
         $interval->method('dateIsInInterval')->willReturn(1);
 
-        $winner = $this->mockUser();
         $auction = new BiddingAuction(
             $this->title,
             $this->desc,
             $interval,
             $this->startPrice,
-            $winner,
+            $this->mockUser(),
             $bids
         );
-        $this->assertEquals($winner, $auction->winner());
+        $this->assertEquals($highestBidder, $auction->winner());
 
         //-------------------------------------
         // Approach B: documents bidding process, but hard to understand
