@@ -99,7 +99,7 @@ vollständig abgeschlossen haben.
 public function testReturnsWinnerAfterAuctionEnd()
     {
         //-------------------------------------
-        // Approach A: easy to understand, but better unit test?
+        // Approach A: easy to understand and better unit test?
         //-------------------------------------
 
         // mock: bids have already been placed
