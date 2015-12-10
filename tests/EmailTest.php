@@ -22,7 +22,7 @@ class EmailTest extends \PHPUnit_Framework_TestCase
      */
     public function testDoesNotAcceptInvalidEmail()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->setExpectedException('InvalidArgumentException', 'is not valid');
         new Email('bademail');
     }
 }

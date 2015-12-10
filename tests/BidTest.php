@@ -32,7 +32,10 @@ class BidTest extends PHPUnit_Framework_TestCase
 
     public function testBidIsPositive()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Bid must be higher than 0/');
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Bid must be higher than 0'
+        );
         new Bid(new Money(0, new Currency('EUR')), $this->mockUser());
     }
 }

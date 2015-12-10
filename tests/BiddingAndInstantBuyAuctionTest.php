@@ -71,9 +71,9 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
         );
         $auction->setInstantBuyPrice($this->hundredEuro());
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/Seller cannot buy/i'
+            'Seller cannot buy from himself'
         );
         $seller->method('equals')->willReturn(true);
         $auction->instantBuy($seller);
@@ -91,9 +91,9 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
         );
         $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/instant buy has to be higher than highest bid/i'
+            'Instant buy has to be higher than highest bid'
         );
         $auction->setInstantBuyPrice($this->tenEuro());
     }
@@ -108,8 +108,10 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
             $this->mockUser()
         );
 
-        $this->setExpectedExceptionRegExp(
-            InvalidArgumentException::class, '/Instant buy price has to be higher/');
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Instant buy price has to be higher than start price'
+        );
         $auction->setInstantBuyPrice($this->oneEuro());
     }
 
@@ -123,31 +125,13 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
             $this->mockUser()
         );
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/instant buy price has not been set/'
+            'Cannot instant buy, instant buy price has not been set'
         );
         $auction->instantBuy($this->mockUser());
     }
 
-    public function testCannotBidAfterAuctionIsWon()
-    {
-        $auction = new BiddingAndInstantBuyAuction(
-            $this->title,
-            $this->desc,
-            $this->mockInterval(),
-            $this->startPrice,
-            $this->mockUser()
-        );
-        $auction->setInstantBuyPrice($this->tenEuro());
-        $auction->instantBuy($this->mockUser());
-
-        $this->setExpectedExceptionRegExp(
-            InvalidArgumentException::class,
-            '/Auction has already been won/'
-        );
-        $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
-    }
 
     public function testCannotInstantBuyAfterAuctionIsWon()
     {
@@ -161,8 +145,9 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
         $auction->setInstantBuyPrice($this->tenEuro());
         $auction->instantBuy($this->mockUser());
 
-        $this->setExpectedExceptionRegExp(
-            InvalidArgumentException::class, '/Auction has already been won/'
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Auction has already been won'
         );
         $auction->instantBuy($this->mockUser());
     }
@@ -194,9 +179,9 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
             $this->title, $this->desc, $this->mockInterval(), $this->startPrice, $seller);
         $auction->setInstantBuyPrice($this->tenEuro());
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/only be changed if new price is lower/'
+            'only be changed if new price is lower'
         );
         $auction->setInstantBuyPrice($this->hundredEuro());
     }
@@ -219,9 +204,9 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
         );
         $auction->setInstantBuyPrice($this->tenEuro());
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/auction has not started yet/i'
+            'Auction has not started yet'
         );
         $auction->instantBuy($this->mockUser());
     }
@@ -237,9 +222,9 @@ class BiddingAndInstantBuyAuctionTest extends PHPUnit_Framework_TestCase
         );
         $auction->close();
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/auction.*closed/i'
+            'Auction has been closed'
         );
         $auction->instantBuy($this->mockUser());
     }

@@ -13,13 +13,13 @@ class AuctionTitleTest extends PHPUnit_Framework_TestCase
 
     public function testRejectsShortTitle()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Min/');
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Min length is \d+/');
         new AuctionTitle(str_repeat('.', AuctionTitle::MIN_LENGTH - 1));
     }
 
     public function testRejectsLongTitle()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Max/');
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Max length is \d+/');
         new AuctionTitle(str_repeat('.', AuctionTitle::MAX_LENGTH + 1));
     }
 }

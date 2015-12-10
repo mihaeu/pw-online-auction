@@ -14,7 +14,10 @@ class CurrencyTest extends \PHPUnit_Framework_TestCase
 
     public function testDoesNotSupportNonEurCurrency()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Unsupported currency/');
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Unsupported currency'
+        );
         new Currency('no-EUR');
     }
 

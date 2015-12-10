@@ -13,13 +13,13 @@ class NicknameTest extends PHPUnit_Framework_TestCase
 
     public function testRejectsTooShortNickname()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Minimum length/');
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Minimum length is \d+/');
         new Nickname('.');
     }
 
     public function testRejectsTooLongNickname()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Maximum length/');
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Maximum length is \d+/');
         new Nickname(str_repeat('.', 256));
     }
 }

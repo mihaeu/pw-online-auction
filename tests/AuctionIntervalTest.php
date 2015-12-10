@@ -7,13 +7,13 @@ class AuctionIntervalTest extends PHPUnit_Framework_TestCase
 {
     public function testStartHasToBeBeforeEnd()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/start has to be before end/i');
+        $this->setExpectedException(InvalidArgumentException::class, 'Start has to be before end');
         new AuctionInterval(new DateTimeImmutable('+2 days'), new DateTimeImmutable());
     }
 
     public function testMinimumDurationIsOneDay()
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/minimum duration/i');
+        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Minimum duration is \d+/');
         new AuctionInterval(new DateTimeImmutable(), new DateTimeImmutable('+2 hours'));
     }
 

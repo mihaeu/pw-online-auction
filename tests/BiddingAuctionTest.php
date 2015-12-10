@@ -235,11 +235,38 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
         );
         $auction->close();
 
-        $this->setExpectedExceptionRegExp(
+        $this->setExpectedException(
             InvalidArgumentException::class,
-            '/auction.*closed/i'
+            'Auction has been closed'
         );
         $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
+    }
+
+    public function testCannotBidAfterAuctionIsWon()
+    {
+        // mock: bids have already been placed
+        $bids = new BidCollection();
+        $bids->addBid(new Bid($this->tenEuro(), $this->mockUser()));
+
+        // mock: Auction finished
+        $interval = $this->mockInterval();
+        $interval->method('dateIsInInterval')->willReturn(1);
+
+        $auction = new BiddingAuction(
+            $this->title,
+            $this->desc,
+            $interval,
+            $this->startPrice,
+            $this->mockUser(),
+            $bids
+        );
+        $auction->winner();
+
+        $this->setExpectedException(
+            InvalidArgumentException::class,
+            'Auction has already been won'
+        );
+        $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
     }
 
     /**
@@ -247,6 +274,33 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
      */
     public function testReturnsWinnerAfterAuctionEnd()
     {
+        //-------------------------------------
+        // Approach A: easy to understand
+        //-------------------------------------
+
+        // mock: bids have already been placed, but better unit test?
+        $bids = new BidCollection();
+        $bids->addBid(new Bid($this->tenEuro(), $this->mockUser()));
+
+        // mock: Auction finished
+        $interval = $this->mockInterval();
+        $interval->method('dateIsInInterval')->willReturn(1);
+
+        $winner = $this->mockUser();
+        $auction = new BiddingAuction(
+            $this->title,
+            $this->desc,
+            $interval,
+            $this->startPrice,
+            $winner,
+            $bids
+        );
+        $this->assertEquals($winner, $auction->winner());
+
+        //-------------------------------------
+        // Approach B: documents bidding process, but hard to understand
+        //-------------------------------------
+
         // we have to mock the AuctionInterval in order to simulate the
         // time frame during and after the auction without slowing down tests
         $interval = $this->mockInterval();
@@ -265,7 +319,7 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
             $this->mockUser()
         );
 
-        $highestBidder = $this->mockUser('mail@highest.com');
+        $highestBidder = $this->mockUser();
         $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
         $auction->placeBid(new Bid($this->hundredEuro(), $highestBidder));
         $this->assertEquals($highestBidder, $auction->winner());
@@ -280,7 +334,7 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
      */
     public function testCannotPlaceBidAfterAuctionHasBeenWon(BiddingAuction $auction)
     {
-        $this->setExpectedExceptionRegExp(InvalidArgumentException::class, '/Auction has.*won/');
+        $this->setExpectedException(InvalidArgumentException::class, 'Auction has already been won');
         $auction->placeBid(new Bid($this->hundredEuro(), $this->mockUser()));
     }
 }

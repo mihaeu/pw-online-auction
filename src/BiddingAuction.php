@@ -78,9 +78,9 @@ class BiddingAuction
     }
 
     /**
-     * @return User
+     * @return User|null
      */
-    public function winner() : User
+    public function winner()
     {
         if (null === $this->winner
             && $this->auctionRanOutOfTime()

@@ -1,5 +1,8 @@
 <?php declare(strict_types = 1);
 
+/**
+ * Helper trait for PHPUnit_Framework_TestCase
+ */
 trait AuctionHelperTrait
 {
     /**
@@ -7,6 +10,9 @@ trait AuctionHelperTrait
      */
     protected function mockInterval()
     {
-        return $this->getMockBuilder('AuctionInterval')->disableOriginalConstructor()->getMock();
+        return $this
+            ->getMockBuilder('AuctionInterval')
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 }

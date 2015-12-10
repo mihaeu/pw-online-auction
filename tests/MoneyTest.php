@@ -23,12 +23,9 @@ class MoneyTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3, $money1->addTo($money2)->amount());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Currency mismatch
-     */
     public function testWillNotAddDifferentCurrencies()
     {
+        /** @var PHPUnit_Framework_MockObject_MockObject|Currency $usd */
         $usd = $this->getMockBuilder(Currency::class)
                     ->disableOriginalConstructor()
                     ->getMock();
@@ -36,6 +33,8 @@ class MoneyTest extends \PHPUnit_Framework_TestCase
         $usd->method('currency')->willReturn('USD');
 
         $money = $this->createMoney();
+
+        $this->setExpectedException(InvalidArgumentException::class, 'Currency mismatch');
         $money->addTo(new Money(1, $usd));
     }
 
