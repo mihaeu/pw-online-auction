@@ -270,6 +270,8 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @uses User
+     *
      * @return BiddingAuction
      */
     public function testReturnsWinnerAfterAuctionEnd()
@@ -280,10 +282,11 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
 
         // inject so that bids have already been placed
         $bids = new BidCollection();
-        $bids->addBid(new Bid($this->tenEuro(), $this->mockUser()));
+        $loser = new User($this->mockNickname(), $this->mockEmail('low@low.com'));
+        $bids->addBid(new Bid($this->tenEuro(), $loser));
 
-        $highestBidder = $this->mockUser();
-        $bids->addBid(new Bid($this->hundredEuro(), $highestBidder));
+        $winner = new User($this->mockNickname(), $this->mockEmail('win@win.com'));
+        $bids->addBid(new Bid($this->hundredEuro(), $winner));
 
         // mock: Auction finished
         $interval = $this->mockInterval();
@@ -297,7 +300,7 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
             $this->mockUser(),
             $bids
         );
-        $this->assertEquals($highestBidder, $auction->winner());
+        $this->assertEquals($winner, $auction->winner());
 
         //-------------------------------------
         // Approach B: documents bidding process, but hard to understand
@@ -318,13 +321,12 @@ class BiddingAuctionTest extends PHPUnit_Framework_TestCase
             $this->desc,
             $interval,
             $this->startPrice,
-            $this->mockUser()
+            $this->mockUser('seller@ebay.com')
         );
 
-        $highestBidder = $this->mockUser();
-        $auction->placeBid(new Bid($this->tenEuro(), $this->mockUser()));
-        $auction->placeBid(new Bid($this->hundredEuro(), $highestBidder));
-        $this->assertEquals($highestBidder, $auction->winner());
+        $auction->placeBid(new Bid($this->tenEuro(), $loser));
+        $auction->placeBid(new Bid($this->hundredEuro(), $winner));
+        $this->assertEquals($winner, $auction->winner());
 
         return $auction;
     }
