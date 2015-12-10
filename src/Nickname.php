@@ -11,6 +11,7 @@ class Nickname
 
     /**
      * @param $nickname
+     * @throws InvalidArgumentException
      */
     public function __construct(string $nickname)
     {
@@ -20,6 +21,9 @@ class Nickname
         $this->nickname = $nickname;
     }
 
+    /**
+     * @return string
+     */
     public function __toString() : string
     {
         return $this->nickname;
@@ -27,6 +31,7 @@ class Nickname
 
     /**
      * @param string $nickname
+     * @throws InvalidArgumentException
      */
     private function ensureNicknameIsNotTooShort(string $nickname)
     {
@@ -37,6 +42,7 @@ class Nickname
 
     /**
      * @param string $nickname
+     * @throws InvalidArgumentException
      */
     private function ensureNicknameIsNotTooLong(string $nickname)
     {

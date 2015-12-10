@@ -11,7 +11,7 @@ trait UserHelperTrait
         $user = $this->getMockBuilder('User')->disableOriginalConstructor()->getMock();
         if (null !== $emailAddress) {
             $email = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
-            $email->method('address')->willReturn($emailAddress);
+            $email->method('__toString')->willReturn($emailAddress);
             $user->method('email')->willReturn($email);
         }
         return $user;
@@ -33,7 +33,7 @@ trait UserHelperTrait
     {
         $email = $this->getMockBuilder('Email')->disableOriginalConstructor()->getMock();
         if (null !== $emailAddress) {
-            $email->method('address')->willReturn($emailAddress);
+            $email->method('__toString')->willReturn($emailAddress);
         }
         return $email;
     }

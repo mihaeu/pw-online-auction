@@ -2,18 +2,38 @@
 
 class Email
 {
+    /**
+     * @var string
+     */
     private $email;
 
+    /**
+     * @param string $address
+     * @throws InvalidArgumentException
+     */
     public function __construct(string $address)
     {
-        if (0 === preg_match('/[\w\d\-]+@\w+\.\w+/', $address)) {
-            throw new \InvalidArgumentException($address.' is not valid a valid email.');
-        }
+        $this->ensureEmailIsValid($address);
+
         $this->email = $address;
     }
 
-    public function address() : string
+    /**
+     * @return string
+     */
+    public function __toString() : string
     {
         return $this->email;
+    }
+
+    /**
+     * @param string $address
+     * @throws InvalidArgumentException
+     */
+    protected function ensureEmailIsValid(string $address)
+    {
+        if (0 === preg_match('/[\w\d\-]+@\w+\.\w+/', $address)) {
+            throw new \InvalidArgumentException($address . ' is not valid');
+        }
     }
 }

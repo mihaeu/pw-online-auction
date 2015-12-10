@@ -2,20 +2,38 @@
 
 class User
 {
+    /**
+     * @var Nickname
+     */
     private $nickname;
+
+    /**
+     * @var Email
+     */
     private $email;
 
+    /**
+     * @param Nickname $nickname
+     * @param Email $email
+     */
     public function __construct(Nickname $nickname, Email $email)
     {
         $this->nickname = $nickname;
         $this->email = $email;
     }
 
-    public function equals(User $user2) : bool
+    /**
+     * @param User $otherUser
+     * @return bool
+     */
+    public function equals(User $otherUser) : bool
     {
-        return $this->email->address() === $user2->email()->address();
+        return $this->email->__toString() === $otherUser->email()->__toString();
     }
 
+    /**
+     * @return Email
+     */
     public function email() : Email
     {
         return $this->email;

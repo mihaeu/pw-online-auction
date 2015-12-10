@@ -7,11 +7,17 @@ class BidCollection
      */
     private $bids;
 
+    /**
+     * @param Bid $bid
+     */
     public function addBid(Bid $bid)
     {
         $this->bids[] = $bid;
     }
 
+    /**
+     * @return Bid|null
+     */
     public function findHighest()
     {
         if (0 === count($this->bids)) {
@@ -27,6 +33,9 @@ class BidCollection
         return $max;
     }
 
+    /**
+     * @return bool
+     */
     public function hasBids() : bool
     {
         return 0 !== count($this->bids);

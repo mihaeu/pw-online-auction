@@ -57,6 +57,7 @@ class BiddingAndInstantBuyAuction extends BiddingAuction
 
     /**
      * @param Money $instantBuyPrice
+     * @throws InvalidArgumentException
      */
     private function ensureInstantPriceCanOnlyBeLowered(Money $instantBuyPrice)
     {

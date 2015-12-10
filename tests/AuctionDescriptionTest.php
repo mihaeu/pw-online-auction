@@ -7,6 +7,7 @@ class AuctionDescriptionTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @covers ::__construct
+     * @covers  ::ensureMinLength
      */
     public function testDoesNotAcceptShortDescription()
     {
@@ -17,6 +18,7 @@ class AuctionDescriptionTest extends PHPUnit_Framework_TestCase
     /**
      * @covers ::__construct
      * @covers ::__toString
+     * @covers  ::ensureMinLength
      */
     public function testAcceptsValidDescription()
     {

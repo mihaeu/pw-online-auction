@@ -26,13 +26,15 @@ class BiddingAuction
      * @param AuctionInterval $interval
      * @param Money $startPrice
      * @param User $seller
+     * @param BidCollection $bids
      */
     public function __construct(
         AuctionTitle $title,
         AuctionDescription $description,
         AuctionInterval $interval,
         Money $startPrice,
-        User $seller
+        User $seller,
+        BidCollection $bids = null
     ) {
         $this->title = $title;
         $this->description = $description;
@@ -42,7 +44,10 @@ class BiddingAuction
         $this->ensureStartPriceIsPositive($startPrice);
         $this->startPrice = $startPrice;
 
-        $this->bids = new BidCollection();
+        $this->bids = $bids;
+        if (null === $bids) {
+            $this->bids = new BidCollection();
+        }
     }
 
     /**
